@@ -1,0 +1,263 @@
+
+.dashboard {
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(24, 24, 27, 1);
+  background-color: var(--navbar-bg)
+}
+
+.Navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  color: var(--navbar-text);
+  border-bottom: 1px solid var(--navbar-border-color); /* Custom Navbar border color */
+  position: relative;
+}
+
+.workspace {
+  position: absolute;
+  width: 290px;
+  left: 50%;
+  transform: translateX(-50%); /* Centers the element horizontally */
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 19.2px;
+  text-align: start;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--workspace-border-color); /* Custom Workspace border color */
+  padding: 8px 9px;
+  border-radius: 6px;
+  color: var(--navbar-text);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  margin-right: 100px;
+}
+
+/* Toggle Switch Styles */
+.theme-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-actions span {
+  user-select: none;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 16.8px;
+  text-align: left;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+}
+
+.switch {
+  --button-width: 40px;
+  --button-height: 16px;
+  --toggle-diameter: 11px;
+  --button-toggle-offset: calc((var(--button-height) - var(--toggle-diameter)) / 2);
+  --toggle-shadow-offset: 10px;
+  --toggle-wider: 3em;
+  --color-grey: #cccccc;
+  --color-green: #4296f4;
+  position: relative;
+}
+
+.slider {
+  display: inline-block;
+  width: var(--button-width);
+  height: var(--button-height);
+  background-color: var(--color-grey);
+  border-radius: calc(var(--button-height) / 2);
+  position: relative;
+  transition: 0.3s all ease-in-out;
+}
+
+.slider::after {
+  content: "";
+  display: inline-block;
+  width: var(--toggle-diameter);
+  height: var(--toggle-diameter);
+  background-color: #fff;
+  border-radius: calc(var(--toggle-diameter) / 2);
+  position: absolute;
+  top: var(--button-toggle-offset);
+  transform: translateX(var(--button-toggle-offset));
+  box-shadow: var(--toggle-shadow-offset) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
+  transition: 0.3s all ease-in-out;
+}
+
+.switch input[type="checkbox"]:checked + .slider {
+  background-color: var(--color-green);
+}
+
+.switch input[type="checkbox"]:checked + .slider::after {
+  transform: translateX(calc(var(--button-width) - var(--toggle-diameter) - var(--button-toggle-offset)));
+}
+
+.switch input[type="checkbox"] {
+  display: none;
+}
+
+.switch input[type="checkbox"]:active + .slider::after {
+  width: var(--toggle-wider);
+}
+
+.switch input[type="checkbox"]:checked:active + .slider::after {
+  transform: translateX(calc(var(--button-width) - var(--toggle-wider) - var(--button-toggle-offset)));
+}
+
+/* Light and Dark Mode Text Styling */
+.light-mode .label-light {
+  color: black;
+}
+
+.dark-mode .label-dark {
+  color: white;
+}
+
+.share-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 35px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: self-start;
+  gap: 5px;
+  margin-top: 40px;
+  margin-left: 150px;
+  background-color: var(--content-bg);
+}
+
+.create-folder {
+  background: transparent;
+  border-style: none;
+}
+
+.create-folder img {
+  height: 35px;
+  width: 145px;
+  margin-left: -6px;
+  background-color: var(--createfolder-bg);
+  border-radius: 6px;
+}
+
+.typebot-icon {
+  height: 220px;
+  width: 190px;
+}
+
+/* Light and Dark Mode Styles */
+.dark-mode {
+  --navbar-text: #ffffff;
+  --navbar-border-color: #444;
+  --workspace-border-color: #444; 
+  --slider-bg: #555;
+}
+
+.light-mode {
+  --navbar-bg: #ffffff;
+  /* --navbar-: #000000; */
+  --navbar-border-color: #000000; 
+  --workspace-border-color: #000000; 
+  --slider-bg: #ccc;
+  --border-color: #ddd;
+  --content-bg: #ffffff; 
+  --createfolder-bg: #201e1e;
+}
+
+
+
+/* Popup Overlay */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+/* Popup Content */
+.popup {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.popup h3 {
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.popup input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #555;
+  background: #2c2c2c;
+  color: #fff;
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.done-btn,
+.cancel-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.done-btn {
+  background: #007bff;
+  color: white;
+}
+
+.cancel-btn {
+  background: #f44336;
+  color: white;
+}
+
+/* Folder List */
+.folder-list {
+  display: flex;
+  flex-direction: column;
+  margin-right: 20px;
+}
+
+.folder-item {
+  background: #2c2c2c;
+  color: #fff;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}

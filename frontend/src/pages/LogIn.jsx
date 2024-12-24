@@ -15,6 +15,36 @@ const LogIn = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+    
+  //   try {
+  //     const response = await fetch(`${API_URL}/api/auth/login`, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ email, password }),
+  //     });
+  
+  //     if (!response.ok) {
+  //       const errorData = await response.json();
+  //       console.error("Backend error:", errorData); // Log backend error details
+  //       setError(errorData.message || "Failed to login");
+  //       return;
+  //     }
+  
+  //     const data = await response.json();
+  //     console.log("Login successful:", data);
+  
+  //     // Store JWT token in localStorage
+  //     localStorage.setItem("token", data.token);
+  
+  //     // Redirect after successful login
+  //     navigate("/");
+  //   } catch (err) {
+  //     console.error("Network error:", err);
+  //     setError("Something went wrong. Please try again.");
+  //   }
+  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -27,7 +57,7 @@ const LogIn = () => {
   
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Backend error:", errorData); // Log backend error details
+        console.error("Backend error:", errorData);
         setError(errorData.message || "Failed to login");
         return;
       }
@@ -35,17 +65,17 @@ const LogIn = () => {
       const data = await response.json();
       console.log("Login successful:", data);
   
-      // Store JWT token in localStorage
+      // Store JWT token and user name in localStorage
       localStorage.setItem("token", data.token);
+      localStorage.setItem("username", data.name);
   
-      // Redirect after successful login
-      navigate("/");
+      // Redirect to the dashboard or desired page
+      navigate("/dashboard");
     } catch (err) {
       console.error("Network error:", err);
       setError("Something went wrong. Please try again.");
     }
   };
-  
   
 
   return (

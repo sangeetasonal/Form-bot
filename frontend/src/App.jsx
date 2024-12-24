@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LandingPage from "./pages/LandingPage";
 import SignUp from './pages/signUp'; // Ensure the path matches the file location
 import LogIn from './pages/LogIn'; 
+import DashBoard from "./components/DashBoard";
+
 
 
 function App() {
@@ -14,6 +16,7 @@ function App() {
           <Route path="/" element={<LandingPage />} /> {/* Landing Page */}
           <Route path="/signup" element={<SignUp />} /> Sign-Up Page
           <Route path="/login" element={<LogIn />} /> {/* Sign-Up Page */}
+          <Route path="/dashboard" element={<DashBoard />} /> {/* Sign-Up Page */}
 
         </Routes>
       </div>

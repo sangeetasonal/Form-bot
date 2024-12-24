@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./src/config/db");
+const userRoutes = require("./src/routes/userRoutes"); // Replace with your actual path
 
 dotenv.config();
 
@@ -24,7 +25,7 @@ app.get("/", (req, res) => {
 const authRoutes = require("./src/routes/authRoutes");
 app.use("/api/auth", authRoutes);
 
-
+app.use("/api", userRoutes);
 
 
 

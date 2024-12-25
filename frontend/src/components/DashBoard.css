@@ -149,21 +149,119 @@
 .create-folder {
   background: transparent;
   border-style: none;
+  cursor: pointer;
+  width: 171px;
+  display: flex; /* Ensures items are aligned in a row */
+  align-items: center; 
+  gap: 8px; 
+height: 40px;
+min-width: 40px;
+padding: 8px 16px 8px 16px;
+border-radius: 6px;
+background-color: #2c2c2c;
+color: rgba(255, 255, 255, 0.92);
+font-size: 15px;
+font-weight: 600;
+line-height: 19.2px;
+text-align: center;
+text-underline-position: from-font;
+text-decoration-skip-ink: none;
+
+
 }
 
-.create-folder img {
-  height: 35px;
-  width: 145px;
-  margin-left: -6px;
-  background-color: var(--createfolder-bg);
-  border-radius: 6px;
-}
-
-.typebot-icon {
+.create-typebot{
+  margin-top: 17px;
   height: 220px;
   width: 190px;
+  background: rgba(26, 95, 255, 1);
+ border-radius: 6px;
+ gap: 25px;
+display: flex;
+flex-direction: column; /* Stacks icon and text vertically */
+align-items: center; /* Centers them horizontally */
+justify-content: center; /* Centers them vertically if needed */
+text-align: center;
+border-style: none;
+}
+.typebot-text {
+  bottom: 10px; 
+  color: rgba(255, 255, 255, 1);
+font-weight: 400;
+font-size: 16px;
+line-height: 18.6px;
+text-underline-position: from-font;
+text-decoration-skip-ink: none;
+margin-bottom: -45px;
+}
+.typebot-icon{
+  margin-top: -50px;
 }
 
+
+.typebot-wrapper {
+  display: flex;
+
+}
+
+.create-typebot {
+  flex-shrink: 0;
+}
+
+.typebot-container{
+  display: flex;
+  gap: 20px;
+  display: flex;
+  flex-wrap: wrap; /* Allows forms to wrap to the next row */
+  gap: 20px; /* Adds spacing between forms */
+  max-height: calc(100vh - 100px); /* Ensure it fits within the screen height */
+ ; /* Adds a vertical scroll if content exceeds container height */
+  padding: 20px; /* Adds some padding around the forms */
+  box-sizing: border-box; /* Includes padding in height calculation */
+}
+  
+
+
+/* .delete-typebot{
+  margin-top: -21px;
+  margin-right: -103px;
+  background-color: transparent;
+  border-style: none;
+} */
+/* .typebot-form {
+  flex-grow: 1;
+  max-width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #f9f9f9;
+} */
+
+.typebot-item{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 216px;
+  width: 190px;
+  background: rgba(255, 255, 255, 0.5);
+  color:rgba(255, 255, 255, 1);
+  position: relative; /* Necessary for positioning child elements */
+  border-radius: 8px;
+
+
+}
+
+
+
+.delete-typebot {
+  position: absolute;
+  top: -9px;
+  right: -11px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
 /* Light and Dark Mode Styles */
 .dark-mode {
   --navbar-text: #ffffff;
@@ -180,7 +278,8 @@
   --slider-bg: #ccc;
   --border-color: #ddd;
   --content-bg: #ffffff; 
-  --createfolder-bg: #201e1e;
+  --createfolder-bg: #2c2c2c;
+  ;
 }
 
 
@@ -192,72 +291,325 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center;
   z-index: 10;
+  margin-top: 142px;
 }
 
 /* Popup Content */
 .popup {
-  background: #1e1e1e;
-  padding: 20px;
-  border-radius: 10px;
-  width: 300px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+ background: rgba(24, 24, 27, 1);
+  padding: 25px 30px;
+  border-radius: 23px;
+  box-shadow: 0px 0px 3.8px 0px rgba(255, 255, 255, 0.25);
+  width: 430px;
+height: 155px;
+border: 1px solid rgba(71, 71, 74, 1)
+
+
 }
 
 .popup h3 {
   margin-bottom: 15px;
-  color: #fff;
+  color: rgba(255, 255, 255, 1);
+  font-size: 22.33px;
+font-weight: 500;
+text-underline-position: from-font;
+text-decoration-skip-ink: none;
+margin-top: 6px;
+
+
 }
 
+
 .popup input {
-  width: 100%;
+  width: 95%;
+  height: 30px;
   padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 5px;
+  margin-bottom: 3px;
+  border-radius: 12px;
   border: 1px solid #555;
-  background: #2c2c2c;
+  background: rgba(31, 31, 35, 1);
   color: #fff;
+font-size: 18px;
+font-weight: 500;
+line-height: 41px;
+text-underline-position: from-font;
+text-decoration-skip-ink: none;
+
 }
 
 .popup-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
+.popup-dlt h3{
+  margin-bottom: 3px;
+  color: rgba(255, 255, 255, 1);
+  font-size: 22.33px;
+font-weight: 500;
+text-underline-position: from-font;
+text-decoration-skip-ink: none;
+margin-top: 6px;
+
+}
+.popup-dlt{
+  background: rgba(24, 24, 27, 1);
+  padding: 25px 40px;
+  border-radius: 23px;
+  box-shadow: 0px 0px 3.8px 0px rgba(255, 255, 255, 0.25);
+  width: 250px;
+height: 110px;
+border: 1px solid rgba(71, 71, 74, 1)
+
+}
+.popup-dlt input{
+  width: 95%;
+  height: 30px;
+  padding: 10px;
+  margin-bottom: 3px;
+  border-radius: 12px;
+  border: 1px solid #555;
+  background: rgba(31, 31, 35, 1);
+  color: #fff;
+font-size: 18px;
+font-weight: 500;
+line-height: 41px;
+text-underline-position: from-font;
+text-decoration-skip-ink: none;
+
+}
+
+.popup-share{
+  background: rgba(24, 24, 27, 1);
+  padding: 50px 45px 40px 40px;
+  border-radius: 23px;
+  box-shadow: 0px 0px 3.8px 0px rgba(255, 255, 255, 0.25);
+  width: 500px;
+height: 300px;
+border: 1px solid rgba(71, 71, 74, 1)
+}
+.popup-share input{
+  width: 95%;
+  height: 35px;
+  padding: 10px;
+  margin-bottom: 3px;
+  border-radius: 12px;
+  border: 1px solid #555;
+  background: rgba(31, 31, 35, 1);
+  color: #fff;
+font-size: 18px;
+font-weight: 500;
+line-height: 41px;
+text-underline-position: from-font;
+text-decoration-skip-ink: none;
+
+}
+.popup-share h2{
+  color: rgba(255, 255, 255, 1);
+  font-size: 19px;
+font-weight: 500;
+text-underline-position: from-font;
+text-decoration-skip-ink: none;
+margin-top: 6px;
+
+}
+
+.invite-btn{
+  width: 500px;
+height: 40.31px;
+border-radius: 12px;
+background: rgba(26, 95, 255, 1);
+box-shadow: 0px 4px 10px 0px rgba(233, 68, 75, 0.25);
+color: rgba(255, 255, 255, 1);
+font-size: 14px;
+font-weight: 500;
+line-height: 24px;
+letter-spacing: 0.03em;
+text-align: center;
+text-underline-position: from-font;
+text-decoration-skip-ink: none;
+border-style: none;
+margin-top: 22px;
+
+}
+
+.invite-by-link{
+  margin-top: 25px;
+}
+.copylink-btn{
+  margin-top: 7px;
+  width: 500px;
+  height: 40.31px;
+  border-radius: 12px;
+  background: rgba(26, 95, 255, 1);
+  box-shadow: 0px 4px 10px 0px rgba(233, 68, 75, 0.25);
+  color: rgba(255, 255, 255, 1);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0.03em;
+  text-align: center;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+  border-style: none;
+}
 .done-btn,
 .cancel-btn {
-  padding: 8px 15px;
-  border: none;
-  border-radius: 5px;
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 41px;
+  text-align: center;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+    border: none;
   cursor: pointer;
+  background: transparent;
 }
 
 .done-btn {
-  background: #007bff;
-  color: white;
+  color: rgba(75, 131, 255, 1);
+  ;
+  
+}
+.line {
+  width: 0px;
+  height: 40px;
+  margin: 15px 10px;
+  display: inline-block;
+  border: 1px solid rgba(71, 71, 74, 1)
 }
 
 .cancel-btn {
-  background: #f44336;
   color: white;
 }
 
-/* Folder List */
+.email-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-toggle {
+  background: none;
+  border-style: none;
+  cursor: pointer;
+  color:  rgba(255, 255, 255, 1);
+font-size: 13px;
+font-weight: 600;
+line-height: 41px;
+text-align: center;
+text-underline-position: from-font;
+text-decoration-skip-ink: none;
+margin-top: 6px;
+
+}
+
+.arrow-icon {
+  margin-left: 5px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 79%;
+  right: 0;
+  border-radius: 4px;
+  z-index: 100;
+  box-shadow: 0px 1px 3.5px 0px rgba(255, 255, 255, 0.25);
+  background: rgba(31, 31, 35, 1);
+width: 70px;
+}
+
+.dropdown-menu button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  /* background: rgba(31, 31, 35, 1); */
+  color:  rgba(255, 255, 255, 1);
+
+}
+
+.shareline{
+  margin-left: 5px;
+  width: 57px;
+  border: 0.2px solid rgba(255, 255, 255, 0.5)
+}
+.folder-container {
+  display: flex;
+  align-items: center; /* Align items vertically */
+  gap: 20px; /* Space between the create button and folder list */
+  flex-wrap: wrap; /* Allow wrapping if there are too many folders */
+  margin-top: 20px; /* Add some top margin if necessary */
+}
+
 .folder-list {
   display: flex;
-  flex-direction: column;
-  margin-right: 20px;
+  flex-wrap: wrap; /* Allow items to wrap if they exceed the container width */
+  gap: 10px;
+  margin-top: -5px;
+  margin-left: -4px;
+  
 }
 
 .folder-item {
+  display: inline-flex; /* Inline-flex ensures the width is only as much as needed */
+  align-items: center;
+  padding: 7px 10px;
+  border-radius: 5px;
   background: #2c2c2c;
   color: #fff;
-  padding: 10px;
-  margin-bottom: 5px;
-  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  max-width: 100%; /* Prevent it from overflowing */
+}
+
+.folder-item:hover {
+  background-color: #443939;
+}
+.folder-item.selected {
+  background-color: #ffffff; /* Background color when selected */
+  color: #000000; /* Text color when selected */
+}
+.folder-text {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap; /* Prevent text wrapping */
+  margin-right: 8px; /* Add spacing between the text and the delete button */
+}
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.delete-btn:hover .delete-icon {
+  transform: scale(1.1); /* Add a hover effect */
+  transition: transform 0.2s ease-in-out;
+}
+
+
+.actions{
+  display: flex;
+  justify-content: flex-end;
+}
+.close-btn{
+  background-color: transparent;
+  border-style: none;
+  margin-top: -47px;
+  margin-right: -19px;
 }

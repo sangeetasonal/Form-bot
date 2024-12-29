@@ -6,6 +6,9 @@ import createtypebot from "../assets/plus.png";
 import deleteicon from "../assets/delete.png";
 import closeicon from "../assets/close.png";
 import dropdown from "../assets/drop-down.png";
+import dropsvg from "../assets/dropdown.png"
+import axios from 'axios';
+
 
 const API_URL = "http://localhost:5000";
 
@@ -13,6 +16,7 @@ const DashBoard = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [username, setUsername] = useState("");
   const [folders, setFolders] = useState([]);
+  const [files, setFiles] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const [selectedFolderIndex, setSelectedFolderIndex] = useState(null);
@@ -26,30 +30,70 @@ const DashBoard = () => {
  const [typeBots, setTypeBots] = useState([]); // State to manage Typebots
  const [showTypeBotDeletePopup, setShowTypeBotDeletePopup] = useState(false); // Delete confirmation for Typebot
  const [typeBotToDelete, setTypeBotToDelete] = useState(null);
+ const [isSelected, setIsSelected] = useState(false);
 
 
-  useEffect(() => {
-    const savedFolders = JSON.parse(localStorage.getItem("folders")) || [];
-    setFolders(savedFolders);
 
+ useEffect(() => {
+  const fetchData = async () => {
     const token = localStorage.getItem("token");
+
     if (token) {
-      fetch(`${API_URL}/api/user`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((res) => res.ok && res.json())
-        .then((user) => setUsername(user.name))
-        .catch((err) => console.error("Error fetching user details:", err));
+      try {
+        // Fetch user details
+        const userResponse = await fetch(`${API_URL}/api/user`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (userResponse.ok) {
+          const user = await userResponse.json();
+          setUsername(user.name);
+        } else {
+          console.error("Failed to fetch user details.");
+        }
+
+        // Fetch folders and files
+        const dataResponse = await fetch(`${API_URL}/api/auth/data`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (dataResponse.ok) {
+          const data = await dataResponse.json();
+          console.log("Fetched data:", data); // Debug backend response
+
+          setFolders(data.folders || []);
+          setFiles(data.files || []);
+
+          localStorage.setItem("folders", JSON.stringify(data.folders || []));
+          localStorage.setItem("files", JSON.stringify(data.files || []));
+        } else {
+          console.error("Failed to fetch folders and files.");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     }
+  };
 
-    const savedTheme = localStorage.getItem("theme");
-    setIsDarkMode(savedTheme === "dark");
-  }, []);
+  // Load from localStorage
+  const savedFolders = JSON.parse(localStorage.getItem("folders"));
+  const savedFiles = JSON.parse(localStorage.getItem("files"));
 
-  useEffect(() => {
-    localStorage.setItem("folders", JSON.stringify(folders));
-  }, [folders]);
+  if (savedFolders) setFolders(savedFolders);
+  if (savedFiles) setFiles(savedFiles);
 
+  
+   
+  // Fetch latest data from backend
+  fetchData();
+  const savedTheme = localStorage.getItem("theme");
+  setIsDarkMode(savedTheme === "dark");
+
+
+}, []);
+
+
+  
   const toggleTheme = () => {
     const newTheme = isDarkMode ? "light" : "dark";
     setIsDarkMode(!isDarkMode);
@@ -58,29 +102,119 @@ const DashBoard = () => {
 
   const handleCreateFolder = () => setShowPopup(true);
 
-  const handleDone = () => {
+
+
+  const handleDone = async () => {
+    console.log("Done button clicked");
+  
     if (newFolderName.trim()) {
-      setFolders([...folders, newFolderName]);
-      setNewFolderName("");
-      setShowPopup(false);
+      try {
+        const token = localStorage.getItem("token");
+  
+        const response = await axios.post(
+          "http://localhost:5000/api/auth/folders",
+          { name: newFolderName },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+  
+        console.log("Response from backend:", response);
+  
+        if (response.status === 201 && response.data.folder) {
+          const newFolder = response.data.folder;
+  
+          // Update the folders state with the new folder
+          setFolders((prevFolders) => {
+            const updatedFolders = [...prevFolders, newFolder];
+            console.log("Updated folders:", updatedFolders);
+  
+            // Save updated folders to localStorage
+            localStorage.setItem("folders", JSON.stringify(updatedFolders));
+  
+            return updatedFolders;
+          });
+  
+          // Clear input and close popup
+          setNewFolderName("");
+          setShowPopup(false);
+        } else {
+          alert("Failed to create folder. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error creating folder:", error);
+        alert("Error creating folder. Please try again.");
+      }
+    } else {
+      alert("Please enter a folder name.");
     }
   };
+  
+  
+  
 
   const handleCancel = () => {
     setNewFolderName("");
     setShowPopup(false);
   };
-
   const handleDeleteFolder = (index) => {
-    setFolderToDelete(index);
+    setFolderToDelete(index); // Use the folder index directly
     setShowDeleteConfirmation(true);
   };
 
-  const handleConfirmDelete = () => {
-    setFolders(folders.filter((_, i) => i !== folderToDelete));
-    setShowDeleteConfirmation(false);
-    setFolderToDelete(null);
+
+  const handleConfirmDelete = async () => {
+    if (folderToDelete === null || folderToDelete < 0 || folderToDelete >= folders.length) {
+      alert("Invalid folder index");
+      return;
+    }
+  
+    const folder = folders[folderToDelete]; // Get the folder to be deleted
+    
+    if (!folder || !folder._id) {
+      console.error("Folder not found or missing _id.");
+      alert("An error occurred while deleting the folder.");
+      return;
+    }
+  
+    try {
+      const token = localStorage.getItem("token");
+  
+      // API call to delete the folder from the backend
+      const response = await axios.delete(`${API_URL}/api/auth/folders/${folder._id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (response.status === 200) {
+        // Update state
+        setFolders((prevFolders) => {
+          const updatedFolders = prevFolders.filter((f) => f._id !== folder._id);
+  
+          // Update localStorage
+          localStorage.setItem("folders", JSON.stringify(updatedFolders));
+  
+          return updatedFolders;
+        });
+  
+        // Reset states
+        setShowDeleteConfirmation(false);
+        setFolderToDelete(null);
+      } else {
+        alert("Failed to delete the folder. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error deleting folder:", error);
+      alert("An error occurred while deleting the folder.");
+    }
   };
+  
+  
+
 
   const handleCancelDelete = () => {
     setShowDeleteConfirmation(false);
@@ -112,30 +246,127 @@ const DashBoard = () => {
     alert("Link copied to clipboard!");
   };
  
-  const handleCreateTypeBot = () => {
-    setTypeBots([...typeBots, { id: Date.now(), name: "New Form" }]);
-  };
+
 
   const handleDeleteTypeBot = (id) => {
     setTypeBotToDelete(id);
     setShowTypeBotDeletePopup(true);
   };
 
-  const confirmTypeBotDelete = () => {
-    setTypeBots(typeBots.filter((bot) => bot.id !== typeBotToDelete));
-    setShowTypeBotDeletePopup(false);
-    setTypeBotToDelete(null);
-  };
 
+
+  const handleCreateTypeBot = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const newTypeBot = { name: "New Form" }; // Default form name
+  
+      const response = await axios.post(`${API_URL}/api/auth/files`, newTypeBot, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (response.status === 201 && response.data.file) {
+        const createdTypeBot = response.data.file;
+  
+        // Update frontend state immediately
+        setFiles((prevFiles) => {
+          const updatedFiles = [...prevFiles, createdTypeBot];
+  
+          // Optionally, update localStorage for persistence
+          localStorage.setItem("files", JSON.stringify(updatedFiles));
+          return updatedFiles;
+        });
+      } else {
+        alert("Failed to create form. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error creating form:", error);
+      alert("An error occurred while creating the form.");
+    }
+  };
+  
+
+
+
+
+
+  const confirmTypeBotDelete = async () => {
+    try {
+      const token = localStorage.getItem("token");
+  
+      // API call to delete the file from the backend
+      const response = await axios.delete(`${API_URL}/api/auth/files/${typeBotToDelete}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (response.status === 200) {
+        // Immediately remove the deleted file from the frontend state (files or typeBots)
+        setFiles((prevFiles) => {
+          const updatedFiles = prevFiles.filter((file) => file._id !== typeBotToDelete);
+  
+          // Update localStorage to reflect the removal immediately
+          localStorage.setItem("files", JSON.stringify(updatedFiles));
+  
+          return updatedFiles;
+        });
+  
+        // Close the delete confirmation popup
+        setShowTypeBotDeletePopup(false);
+        setTypeBotToDelete(null);
+      } else {
+        alert("Failed to delete the form. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error deleting form:", error);
+      alert("An error occurred while deleting the form.");
+    }
+  };
+  
+  
   const cancelTypeBotDelete = () => {
     setShowTypeBotDeletePopup(false);
     setTypeBotToDelete(null);
   };
 
+  const handleItemClick = (botId) => {
+    navigate(`/workspace`); // Navigate to the workshop page for the selected bot
+  };
   return (
     <div className={`dashboard ${isDarkMode ? "dark-mode" : "light-mode"}`}>
       <nav className="Navbar">
-        <div className="workspace">{username}'s workspace</div>
+      <div
+  className={`workspace ${dropdownOpen ? "dropdown-open" : ""}`}
+  onClick={() => setDropdownOpen(!dropdownOpen)}
+>
+  {username}'s workspace
+  <img
+    src={dropsvg}
+    alt="svg"
+    className={`dropsvg ${dropdownOpen ? "rotate" : ""}`}
+  />
+  {dropdownOpen && (
+    <div className="dropdown-menu-nav">
+      <button className="dropdown-item" onClick={() => navigate("/Settings")}>
+        Settings
+      </button>
+      <button
+        className="dropdown-item logout"
+        onClick={() => {
+          localStorage.removeItem("token"); // Clear token or any other logout logic
+          navigate("/landing");
+        }}
+      >
+        Log Out
+      </button>
+    </div>
+  )}
+ </div>
+
+
         <div className="nav-actions">
           <span className="light-text">Light</span>
           <label className="switch">
@@ -156,63 +387,69 @@ const DashBoard = () => {
       </nav>
 
       <div className="content">
-        <div className="folder-container">
-          <button className="create-folder" onClick={handleCreateFolder}>
-            <img src={createfolder} alt="Create Folder" className="folder-icon" />
-            Create a folder
-
-          </button>
-          <div className="folder-list">
-            {folders.map((folder, index) => (
-              <div
-                key={index}
-                className={`folder-item ${selectedFolderIndex === index ? "selected" : ""}`}
-                onClick={() => handleSelectFolder(index)}
+      <div className="folder-container">
+        <button className="create-folder" onClick={handleCreateFolder}>
+          <img src={createfolder} alt="Create Folder" className="folder-icon" />
+          Create a folder
+        </button>
+        
+        <div className="folder-list">
+          {folders.map((folder, index) => (
+            <div
+              key={folder._id} // Use unique key, like _id from the backend
+              className={`folder-item ${selectedFolderIndex === index ? "selected" : ""}`}
+              onClick={() => handleSelectFolder(index)}
+            >
+              <span className="folder-text">{folder.name}</span>
+              <button
+                className="delete-btn"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent folder selection click
+                  handleDeleteFolder(index);
+                }}
               >
-                <span className="folder-text">{folder}</span>
-                <button
-                  className="delete-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteFolder(index);
-                  }}
-                >
-                  <img src={deleteicon} alt="delete" className="delete-icon" />
-                </button>
-              </div>
-            ))}
-          </div>
+                <img src={deleteicon} alt="delete" className="delete-icon" />
+              </button>
+            </div>
+          ))}
         </div>
+      </div>
+
+
+
+
+        
          <div className="typebot-wrapper">
           
         <button className="create-typebot" onClick={handleCreateTypeBot}>
           <img src={createtypebot} alt="Create Typebot" className="typebot-icon" />
           <span className="typebot-text">Create a typebot</span>
         </button>
-        <div className="typebot-container">
-          
-          {typeBots.map((bot) => (
-            
-            <div key={bot.id} className="typebot-item">
-              
-              <span>New form</span>
-              <div className="delete">
-              <button className="delete-typebot" onClick={() => handleDeleteTypeBot(bot.id)}>
-                <img src={deleteicon} alt="delete" className="delete-icon" />
-              </button>
-              </div>
-            </div>
-            
-          ))}
-         
-        </div>
+       
+<div className="typebot-container">
+  {files.length > 0 ? (
+    files.map((file) => (
+      <div key={file._id} className="typebot-item">
+        <span className="newform" onClick={() => handleItemClick(file._id)}>
+          {file.name}
+        </span>
+        <button className="delete-typebot" onClick={() => handleDeleteTypeBot(file._id)}>
+          <img src={deleteicon} alt="delete" className="delete-icon" />
+        </button>
+      </div>
+    ))
+  ) : null} {/* Do not render anything if no files */}
+</div>
+
+
+
       </div>
       </div>
       {/* Typebot Delete Confirmation Popup */}
       {showTypeBotDeletePopup && (
         <div className="popup-overlay">
-          <div className="popup">
-            <h3>Are you sure you want to delete this typebot?</h3>
+          <div className="popup-dlt">
+            <h3>Are you sure you want to <span> delete this form? </span></h3>
             <div className="popup-actions">
               <button onClick={confirmTypeBotDelete} className="done-btn">
                 Done
@@ -287,9 +524,8 @@ const DashBoard = () => {
               placeholder="Enter folder name"
             />
             <div className="popup-actions">
-              <button onClick={handleDone} className="done-btn">
-                Done
-              </button>
+            <button onClick={handleDone} className="done-btn">Done</button>
+
               <div className="line"></div>
               <button onClick={handleCancel} className="cancel-btn">
                 Cancel
@@ -301,21 +537,23 @@ const DashBoard = () => {
 
       {/* Delete Confirmation Popup */}
       {showDeleteConfirmation && (
-        <div className="popup-overlay">
-          <div className="popup-dlt">
-            <h3>Are you sure you want to delete this folder?</h3>
-            <div className="popup-actions">
-              <button onClick={handleConfirmDelete} className="done-btn">
-                Confirm
-              </button>
-              <div className="line"></div>
-              <button onClick={handleCancelDelete} className="cancel-btn">
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+  <div className="popup-overlay">
+    <div className="popup-dlt">
+      <h3>
+        Are you sure you want to <span> delete this folder? </span>
+      </h3>
+      <div className="popup-actions">
+      <button onClick={handleConfirmDelete} className="done-btn">
+  Confirm
+</button>
+        <div className="line"></div>
+        <button onClick={handleCancelDelete} className="cancel-btn">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };

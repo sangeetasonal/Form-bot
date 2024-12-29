@@ -15,7 +15,7 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-// Compare password method
+// Compare hashed password with the plain-text password
 UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };

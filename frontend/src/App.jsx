@@ -1,24 +1,29 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify'; // Import ToastContainer
+import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
+
 import LandingPage from "./pages/LandingPage";
-import SignUp from './pages/signUp'; // Ensure the path matches the file location
-import LogIn from './pages/LogIn'; 
+import SignUp from './pages/SignUp';
+import LogIn from './pages/LogIn';
 import DashBoard from "./components/DashBoard";
-
-
+import Settings from "./pages/Settings";
+import WorkSpace from './components/WorkSpace';
 
 function App() {
   return (
     <Router>
       <div className="App">
-       
         <Routes>
-          <Route path="/" element={<LandingPage />} /> {/* Landing Page */}
-          <Route path="/signup" element={<SignUp />} /> Sign-Up Page
-          <Route path="/login" element={<LogIn />} /> {/* Sign-Up Page */}
-          <Route path="/dashboard" element={<DashBoard />} /> {/* Sign-Up Page */}
-
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<LogIn />} />
+          <Route path="/dashboard" element={<DashBoard />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/workspace" element={<WorkSpace />} />
         </Routes>
+        {/* ToastContainer should be outside of Routes */}
+        <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} closeOnClick draggable pauseOnHover />
       </div>
     </Router>
   );

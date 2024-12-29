@@ -1,5 +1,8 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs"); 
+const Folder = require("../models/Folder");
+const File = require("../models/File");
 
 // Generate JWT
 const generateToken = (id) => {
@@ -7,7 +10,7 @@ const generateToken = (id) => {
 };
 
 const registerUser = async (req, res) => {
-  const { name, email, password } = req.body; // Expect name here
+  const { name, email, password } = req.body;
 
   try {
     if (!name || !email || !password) {
@@ -27,26 +30,7 @@ const registerUser = async (req, res) => {
 };
 
 
-// Login User
-// const loginUser = async (req, res) => {
-//   const { email, password } = req.body;
 
-//   try {
-//     const user = await User.findOne({ email });
-//     if (user && (await user.matchPassword(password))) {
-//       res.status(200).json({
-//         message: "Login successful",
-//         name: user.name,
-//         token: generateToken(user._id),
-//       });
-      
-//     } else {
-//       res.status(401).json({ message: "Invalid email or password" });
-//     }
-//   } catch (error) {
-//     res.status(500).json({ message: "Server error", error: error.message });
-//   }
-// };
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -67,4 +51,147 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+
+
+const updateUser = async (req, res) => {
+  const { name, email, oldPassword, newPassword } = req.body;
+
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (oldPassword && newPassword) {
+      const isMatch = await user.matchPassword(oldPassword);
+      if (!isMatch) return res.status(401).json({ message: "Old password is incorrect" });
+
+      user.password = newPassword; // This will trigger the `pre("save")` middleware
+    }
+
+    if (name) user.name = name;
+    if (email) user.email = email;
+
+    await user.save();
+    res.status(200).json({ message: "User updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
+
+// Create a new folder
+const createFolder = async (req, res) => {
+  try {
+    const { name } = req.body;
+    const userId = req.user.id; // Use `req.user.id` from authenticated token
+
+    if (!name) {
+      return res.status(400).json({ message: "Folder name is required" });
+    }
+
+    const folder = new Folder({ name, createdBy: userId });
+    await folder.save();
+
+    // Populate createdBy field to include only the user's name, excluding _id
+    const populatedFolder = await Folder.findById(folder._id)
+      .populate('createdBy', 'name');  // Only fetch the 'name' of the user
+
+    res.status(201).json({
+      message: "Folder created successfully",
+      folder: populatedFolder, // Send populated folder with the user's name (without _id)
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Create a new file (inside a folder or standalone)
+// Create a new file (inside a folder or standalone)
+const createFile = async (req, res) => {
+  try {
+    const { name, folderId } = req.body;
+    const userId = req.user.id; // Use `req.user.id` from authenticated token
+
+    if (!name) {
+      return res.status(400).json({ message: "File name is required" });
+    }
+
+    const file = new File({ name, folderId, createdBy: userId });
+    await file.save();
+
+    // Populate createdBy field to include user's name
+    const populatedFile = await File.findById(file._id).populate('createdBy', 'name');
+
+    res.status(201).json({
+      message: "File created successfully",
+      file: populatedFile, // Send populated file with the user's name
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Get all folders and files created by the user
+const getFoldersAndFiles = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const folders = await Folder.find({ createdBy: userId });
+    const files = await File.find({ createdBy: userId });
+
+    res.status(200).json({ folders, files });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
+
+// Delete a folder and all its files
+const deleteFile = async (req, res) => {
+  try {
+    const { id } = req.params; // File ID from the request URL
+    const userId = req.user.id; // User ID from the authenticated token
+
+    const file = await File.findOneAndDelete({ _id: id, createdBy: userId });
+    if (!file) {
+      return res.status(404).json({ message: "File not found or unauthorized" });
+    }
+
+    res.status(200).json({ message: "File deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
+// Delete a folder and all its files
+const deleteFolder = async (req, res) => {
+  try {
+    const { id } = req.params; // Folder ID from the request URL
+    const userId = req.user.id; // User ID from the authenticated token
+
+    const folder = await Folder.findOneAndDelete({ _id: id, createdBy: userId });
+    if (!folder) {
+      return res.status(404).json({ message: "Folder not found or unauthorized" });
+    }
+
+    // Optionally delete all files associated with the folder
+    await File.deleteMany({ folderId: id });
+
+    res.status(200).json({ message: "Folder and associated files deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
+
+module.exports = { registerUser,
+                   loginUser ,
+                   updateUser, 
+                   createFolder,
+                   createFile,
+                   getFoldersAndFiles,
+                   deleteFolder,
+                   deleteFile};

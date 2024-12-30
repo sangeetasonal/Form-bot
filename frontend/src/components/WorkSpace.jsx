@@ -10,8 +10,10 @@ import button7 from "../assets/Background+Border (7).png";
 import button8 from "../assets/Background+Border (8).png";
 import button9 from "../assets/Background+Border (9).png";
 import button10 from "../assets/Background+Border (10).png";
+import deleteicon from  "../assets/delete.png";
 import close from "../assets/close.png";
 import flag from "../assets/flag.png";
+import msg from "../assets/chat_bubble.png"
 import './WorkSpace.css';
 
 const WorkSpace = () => {
@@ -59,6 +61,10 @@ const WorkSpace = () => {
     <div className={`workspace-component ${isDarkMode ? 'dark' : 'light'}`}>
       <header className="workspace-header">
         <input type="text" placeholder="Enter Form Name" className="form-name" />
+        <div className="nav-btn">
+          <button>flow</button>
+          <button>Response</button>
+        </div>
         <div className="nav-toogle">
           <span className="light-text">Light</span>
           <label className="switch">
@@ -119,14 +125,21 @@ const WorkSpace = () => {
           <div className="start-node">
             <img src={flag} alt="" className="flag" /> Start
           </div>
+          
 
           {/* Render all containers dynamically */}
           <div className="containers">
+         
             {containers.map(container => (
               <div key={container.id} className="container">
+                 
                 {container.type === 'text' && (
                   <div className="text-container">
-                    <h1>Text Container</h1>
+                  <h1>Text</h1>
+                  <div className="input-wrapper">
+                    <span className="input-icon">
+                      <img src={msg} alt="icon" />
+                    </span>
                     <input
                       type="text"
                       value={container.value}
@@ -134,6 +147,8 @@ const WorkSpace = () => {
                       placeholder="Click here to edit"
                     />
                   </div>
+                </div>
+                
                 )}
                 {container.type === 'img' && (
                   <div className="img-container">
@@ -225,8 +240,11 @@ const WorkSpace = () => {
                     <h1>Input Button</h1>
                     <button>{container.value || "Click Me"}</button>
                   </div>
+                  
                 )}
-                <button onClick={() => handleDelete(container.id)} className="delete-button">Delete</button>
+               <button onClick={() => handleDelete(container.id)} className="delete-button">
+                  <img src={deleteicon} alt="" />
+                </button>
               </div>
             ))}
           </div>

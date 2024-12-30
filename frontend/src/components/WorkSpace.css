@@ -37,6 +37,8 @@
   border: none;
   background: rgba(55, 55, 62, 1);
   color: #fff;
+  margin-right: 185px;
+
 }
 
 /* .header-controls button {
@@ -138,9 +140,10 @@ color: #FFFFFFEB;
 .canvas {
   flex: 1;
   display: flex;
-  justify-content: center;
-
-
+  flex-direction: column;
+  align-items: center; /* Centers horizontally */
+  position: relative;
+  margin-right: 210px;
 
 
 }
@@ -168,7 +171,7 @@ margin-top: 65px;
 
 }
 
-.container {
+/* .container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -178,13 +181,15 @@ margin-top: 65px;
   border-radius: 8px;
   box-shadow: 0px 10px 10px -5px rgba(0, 0, 0, 0.04);
   width: 300px;
-}
+} */
 
 .text-container input {
-  width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 5px;
+  background-color:  #1F1F23;
+  border-style: none;
+  width: 215px;
 }
 
 .img-container img {
@@ -198,11 +203,112 @@ margin-top: 65px;
 }
 
 .delete-button {
-  background-color: #f44336;
-  color: white;
+  background-color: transparent;
+  border-style: none;
+
+}
+
+/* .containers{
+  margin-top: 116px;
+} */
+
+
+.start-node {
+  margin-bottom: 20px; /* Space between start node and containers */
+}
+
+.containers {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between containers */
+  margin-top: 20px;
+}
+
+.container {
+  display: flex;
+  background-color:  #18181B;
+  border-radius: 8px;
+  padding: 0px 15px 15px 15px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 13px;
+  line-height: 21px;
+  text-align: left;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+  color: #FFFFFF;
+}
+
+
+.delete-button {
+  margin-top: -75px;
+  margin-right: -25px;
+  background: none;
   border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
   cursor: pointer;
-  margin-top: 10px;
+}
+
+
+
+.nav-btn {
+  display: flex;
+  justify-content: center; /* Center buttons horizontally */
+  align-items: center; /* Center buttons vertically */
+  flex-grow: 1; /* Allows the nav-btn section to grow and occupy space */
+}
+
+.nav-btn button {
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+font-size: 14px;
+font-weight: 600;
+line-height: 16.8px;
+text-underline-position: from-font;
+text-decoration-skip-ink: none;
+
+}
+
+.nav-btn button:hover {
+  background-color: var(--btn-hover-bg);
+}
+
+.header-controls {
+  display: flex;
+  gap: 10px; /* Space between controls */
+}
+
+
+.nav-toogle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 250px;
+}
+
+.input-icon {
+  position: absolute;
+  left: 10px; /* Adjust as needed */
+  display: flex;
+  align-items: center;
+}
+
+.input-icon img {
+  width: 20px; /* Adjust icon size */
+  height: 20px;
+}
+
+.input-wrapper input[type="text"] {
+  width: 100%; /* Full width */
+  padding: 10px 10px 10px 40px; /* Add padding to the left for the icon */
+ 
+  box-sizing: border-box; /* Ensure padding doesn’t affect width */
 }

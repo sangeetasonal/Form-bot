@@ -112,24 +112,46 @@ const createFile = async (req, res) => {
     const { name, folderId } = req.body;
     const userId = req.user.id; // Use `req.user.id` from authenticated token
 
+    // Log for debugging
+    console.log("Received request body:", req.body);
+    console.log("User ID from token:", userId);
+
+    // Validate name
     if (!name) {
       return res.status(400).json({ message: "File name is required" });
     }
 
-    const file = new File({ name, folderId, createdBy: userId });
+    // Handle folderId if it's not provided
+    if (folderId && folderId === 'null') {
+      // Optional: handle specific behavior for null folderId
+      console.log("Folder ID is null, creating file without a folder.");
+    }
+
+    // Create the file
+    const file = new File({
+      name,
+      folderId: folderId !== undefined ? folderId : null, // Ensure folderId is either provided or null
+      createdBy: userId,
+    });
+
     await file.save();
 
     // Populate createdBy field to include user's name
     const populatedFile = await File.findById(file._id).populate('createdBy', 'name');
 
+    // Send the response
     res.status(201).json({
       message: "File created successfully",
-      file: populatedFile, // Send populated file with the user's name
+      file: populatedFile,
     });
   } catch (error) {
+    // Log the error for debugging
+    console.error("Error creating file:", error);
+    
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 
 // Get all folders and files created by the user
 const getFoldersAndFiles = async (req, res) => {
@@ -187,6 +209,40 @@ const deleteFolder = async (req, res) => {
 
 
 
+
+const updateFile = async (req, res) => {
+  try {
+    const { id } = req.params;  // Extract file ID from URL parameters
+    const { name } = req.body;  // Extract new name from request body
+
+    console.log("Updating file with ID:", id);  // Log the ID for debugging
+
+    // Check if ID is valid
+    if (!id) {
+      return res.status(400).json({ message: "File ID is required" });
+    }
+
+    const updatedFile = await File.findByIdAndUpdate(
+      id, 
+      { name },
+      { new: true }  // Return the updated file
+    );
+
+    if (!updatedFile) {
+      return res.status(404).json({ message: "File not found" });
+    }
+
+    res.status(200).json({
+      message: "File updated successfully",
+      file: updatedFile,
+    });
+  } catch (error) {
+    console.log("Error:", error);  // Log error message for debugging
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
 module.exports = { registerUser,
                    loginUser ,
                    updateUser, 
@@ -194,4 +250,5 @@ module.exports = { registerUser,
                    createFile,
                    getFoldersAndFiles,
                    deleteFolder,
+                   updateFile,
                    deleteFile};

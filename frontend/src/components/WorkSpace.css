@@ -11,15 +11,6 @@
   height: 100vh;
 }
 
-.workspace-component.dark {
-  background-color: #1a1a1a;
-  color: #ffffff;
-}
-
-.workspace-component.light {
-  background-color: #f5f5f5;
-  color: #000000;
-}
 
 .workspace-header {
   display: flex;
@@ -28,7 +19,7 @@
   padding: 10px 20px;
   background-color:  rgba(24, 24, 27, 1);
   color: #fff;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.16)
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 .form-name {
@@ -48,13 +39,8 @@
   border-radius: 5px;
   cursor: pointer;
 } */
-.nav-toogle{
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-left: auto;
-  margin-right: 25px;
-}
+
+  
 .header-controls .save {
   background-color: #28a745;
   color: white;
@@ -88,7 +74,6 @@
 
 
 .toolbox {
-  width: 320px;
   padding: 10px;
   background-color:rgba(24, 24, 27, 1);
   color: white;
@@ -111,6 +96,8 @@
 
 .button-row {
   display: flex;
+  gap: 10px;
+  
 }
 
 .tool-section h3 {
@@ -127,15 +114,27 @@ color: #FFFFFFEB;
 
 .tool-section button {
   display: flex;
-  background-color: transparent;
+  width: 149px;
+  height: 39px;
+  background-color: #1F1F23;
+  border-radius: 8px;
+  color: #FFFFFFEB;
+  padding: 9px 17px;
+  gap: 8px;
   border-style: none;
   border: none;
   cursor: pointer;
-  justify-content: center;
-
+  border: 1px solid #27272A;
   align-items: center;
+  text-align: center;
 }
 
+
+.button-row .msg img{
+  width: 18px;
+  height: 18px;
+ 
+}
 
 .canvas {
   flex: 1;
@@ -228,7 +227,7 @@ margin-top: 65px;
   display: flex;
   background-color:  #18181B;
   border-radius: 8px;
-  padding: 0px 15px 15px 15px;
+  padding: 0px 15px 18px 15px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   font-size: 13px;
   line-height: 21px;
@@ -236,6 +235,9 @@ margin-top: 65px;
   text-underline-position: from-font;
   text-decoration-skip-ink: none;
   color: #FFFFFF;
+  width: 251px;
+  position: relative; /* Allows positioning of children */
+  min-height: 90px; /* Reserve space for "required" message */
 }
 
 
@@ -253,9 +255,19 @@ margin-top: 65px;
   display: flex;
   justify-content: center; /* Center buttons horizontally */
   align-items: center; /* Center buttons vertically */
-  flex-grow: 1; /* Allows the nav-btn section to grow and occupy space */
+  flex-grow: 1; 
+  gap: 10px;
+  margin-left: 1px;
 }
-
+.flow-btn{
+  border: 1px solid #7EA6FF;
+  color: #7EA6FF;
+  border-radius: 6px;
+  height: 30px;
+  width: 50px;
+  display: flex;
+  justify-content: center;
+}
 .nav-btn button {
   background-color: var(--btn-bg);
   color: var(--btn-text);
@@ -285,6 +297,18 @@ text-decoration-skip-ink: none;
   display: flex;
   align-items: center;
   gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  margin-right: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 16.8px;
+  text-align: left;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+  
 }
 
 .input-wrapper {
@@ -309,6 +333,193 @@ text-decoration-skip-ink: none;
 .input-wrapper input[type="text"] {
   width: 100%; /* Full width */
   padding: 10px 10px 10px 40px; /* Add padding to the left for the icon */
- 
+ color: #FFFFFF;
   box-sizing: border-box; /* Ensure padding doesn’t affect width */
+}
+
+.img-container input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color:  #1F1F23;
+  border-style: none;
+  width: 230px;
+}
+.video-container input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color:  #1F1F23;
+  border-style: none;
+  width: 230px;
+}
+
+.gif-container input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color:  #1F1F23;
+  border-style: none;
+  width: 230px;
+}
+.input-text-container p {
+color: #555555;
+  width: 250px;
+}
+.input-number p {
+  color: #555555;
+  width: 250px;
+}
+.input-email-container p {
+  color: #555555;
+  width: 250px;
+}
+
+.input-number-container p{
+  color: #555555;
+  width: 250px;
+}
+.input-phone-container p{
+  color: #555555;
+  width: 250px;
+}
+.input-date-container p{
+  color: #555555;
+  width: 250px;
+}
+.input-rating-container p{
+  color: #555555;
+  width: 250px;
+}
+.input-button-container input{
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color:  #1F1F23;
+  border-style: none;
+  width: 230px;
+}
+
+
+
+
+
+
+.error-message {
+  color: #522224;
+  position: absolute;
+  margin-top: 50px;
+  font-size: 10.43px;
+}
+
+
+
+.text-input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  flex-grow: 1;
+  transition: border-color 0.3s;
+}
+
+
+
+.text-input.input-error {
+  border:  1px solid #F55050;
+}
+
+
+/* workspace.css */
+
+
+/* Light Mode Styles */
+.workspace-component.light-mode .workspace-header {
+  background-color: #FFFFFF; /* Example light mode header background */
+  color: #000; /* Example light mode text color */
+  border-bottom:  1px solid #00000029;
+
+}
+.workspace-component.light-mode .form-name{
+  color: #000; /* Example light mode form name color */
+  background-color: #ffffff;
+  border: 1px solid #D6D6D6
+}
+
+.workspace-component.light-mode .toolbox {
+  background-color: #ffffff; /* Example light mode controls background */
+  border: 1px solid #00000029;
+  box-shadow: 0px 20px 25px -5px #0000001A;
+
+}
+
+.workspace-component.light-mode .text-container input{
+  background-color: #ffffff;
+  color: #000;
+  border: 1px solid #D6D6D6
+}
+.workspace-component.light-mode .container{
+  background-color: #ffffff;
+  border: 1px solid #D6D6D6;
+  color: #000;
+}
+
+.workspace-component.light-mode .start-node {
+  background-color: #ffffff; /* Example light mode delete button background */
+  color: #000; /* Example light mode delete button text color */
+  border: 1px solid #D6D6D6
+}
+.workspace-component.light-mode .canvas {
+  background-color: #ffffff; /* Example light mode canvas background */
+}
+.workspace-component.light-mode .workspace-main{
+  background-color: #FFFFFF; /* Example light mode workspace background */
+}
+
+.workspace-component.light-mode .tool-section button{
+  background-color: #ffffff; /* Example light mode tool button background */
+  color: #000000EB;
+ border: 1px solid #D6D6D6;
+}
+.workspace-component.light-mode .text-input.input-error{
+  border:  1px solid #F55050;
+}
+.workspace-component.light-mode .error-message {
+  color: #522224;
+}
+.workspace-component.light-mode .input-button-container input {
+  background-color: #ffffff; /* Example light mode button background */
+  color: #000000EB;
+  border: 1px solid #D6D6D6
+}
+.workspace-component.light-mode .gif-container input{
+  background-color: #ffffff; /* Example light mode tool button background */
+  color: #000000EB;
+ border: 1px solid #D6D6D6;
+}
+.workspace-component.light-mode .video-container input{
+  background-color: #ffffff; /* Example light mode tool button background */
+  color: #000000EB;
+ border: 1px solid #D6D6D6;
+}
+.workspace-component.light-mode .img-container input{
+  background-color: #ffffff; /* Example light mode tool button background */
+  color: #000000EB;
+ border: 1px solid #D6D6D6;
+}
+.workspace-component.light-mode .tool-section h3 {
+  color: #000000EB;
+}
+
+
+.canvas-message {
+  position: absolute;
+  top: 10px; /* Adjust as needed */
+  right: -80px; /* Adjust as needed */
+  background-color: rgba(24, 24, 27, 1); /* Light blue background */
+  color: #ffffff; /* Dark text for contrast */
+  padding: 5px 10px;
+  border-radius: 5px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  font-weight: bold;
 }

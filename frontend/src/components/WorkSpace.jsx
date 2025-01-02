@@ -1,37 +1,180 @@
 import React, { useState, useEffect } from 'react';
-import button from "../assets/Background+Border.png";
-import button1 from "../assets/Background+Border (1).png";
-import button2 from "../assets/Background+Border (2).png";
-import button3 from "../assets/Background+Border (3).png";
-import button4 from "../assets/Background+Border (4).png";
-import button5 from "../assets/Background+Border (5).png";
-import button6 from "../assets/Background+Border (6).png";
-import button7 from "../assets/Background+Border (7).png";
-import button8 from "../assets/Background+Border (8).png";
-import button9 from "../assets/Background+Border (9).png";
-import button10 from "../assets/Background+Border (10).png";
+import { useNavigate} from 'react-router-dom';
+import attherate from "../assets/@.png"
+import date from "../assets/date.png"
+import gif from "../assets/gif.png"
+import hash from "../assets/hash.png"
+import image from "../assets/images.png"
+import phone from "../assets/phone.png"
+import star from "../assets/star.png"
+import text from "../assets/text.png"
+import tick from "../assets/tick.png"
+import video from "../assets/video.png"
+import msg from "../assets/chat_bubble.png"
 import deleteicon from  "../assets/delete.png";
+import blueFlag from "../assets/blue_flag.png";
 import close from "../assets/close.png";
 import flag from "../assets/flag.png";
-import msg from "../assets/chat_bubble.png"
+import axios from "axios";
+import { useLocation } from 'react-router-dom'; // Make sure this is imported
+
+
 import './WorkSpace.css';
+const API_URL = "http://localhost:5000";
 
 const WorkSpace = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [containers, setContainers] = useState([]); // State to hold the containers
+  const { state } = useLocation(); // Get the passed state
+  const { fileId } = state || {}; // Destructure fileId from the passed state
 
-  const toggleTheme = () => {
-    const newTheme = isDarkMode ? "light" : "dark";
-    setIsDarkMode(!isDarkMode);
-    localStorage.setItem("theme", newTheme);
+  const [fileName, setFileName] = useState('');
+
+  useEffect(() => {
+    if (fileId) {
+      // You can fetch the file's details here using fileId
+      // Example: axios.get(`/api/files/${fileId}`)
+      // Update the fileName with the response from the backend
+    }
+  }, [fileId]);
+
+  const handleFileNameChange = (e) => {
+    setFileName(e.target.value);
   };
 
+ 
+   const navigate = useNavigate();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [shareMessage, setShareMessage] = useState("");
+  const handleShare = () => setShowSharePopup(true); // Show Share Popup
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      console.log("Enter key pressed!");
+      // Call the function to update the file name when Enter is pressed
+      handleNameChange();
+    }
+  };
+  
+  const handleKeyPress = async (e) => {
+    if (e.key === 'Enter') {
+      console.log('Enter pressed, saving file name:', fileName);
+      
+      try {
+        const token = localStorage.getItem("token"); // Retrieve the token for authorization
+        const response = await axios.put(
+          `http://localhost:5000/api/auth/files/${fileId}`, // The endpoint to update the file
+          { name: fileName }, // The data you want to update (new file name)
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Make sure you're sending the token if required
+              "Content-Type": "application/json",
+            },
+          }
+        );
+  
+        if (response.status === 200) {
+          console.log("File updated successfully:", response.data);
+          alert(`File name updated to: ${fileName}`);
+        } else {
+          console.error("Error updating file:", response);
+          alert("Failed to update the file. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error updating file:", error);
+        alert("An error occurred while updating the file.");
+      }
+    }
+  };
+  
+  const handleNameChange = async () => {
+    console.log("File Name:", fileName);
+    console.log("File ID:", fileId);
+  
+    if (!fileName.trim()) {
+      alert("File name is required!");
+      return;
+    }
+  
+    if (!fileId) {
+      alert("Invalid fileId");
+      return;
+    }
+  
+    try {
+      const token = localStorage.getItem("token");
+  
+      const response = await axios.put(
+        `${API_URL}/api/auth/files/update`,
+        { fileId, name: fileName },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      if (response.status === 200 && response.data.file) {
+        alert("File name updated successfully!");
+        onNameChange(response.data.file.name);
+      } else {
+        alert("Failed to update file name.");
+      }
+    } catch (error) {
+      console.error("Error updating file name:", error);
+      alert("An error occurred while updating the file name.");
+    }
+  };
+  
+
+  const saveFileName = async () => {
+    console.log("fileId:", fileId); // Debugging line
+
+    try {
+      const token = localStorage.getItem("token");
+  
+      // Assuming `fileId` and `fileName` are part of your component's state
+      const response = await axios.patch(
+        `${API_URL}/api/auth/files/${fileId}`,
+        { name: fileName },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        alert("File name saved successfully!");
+      } else {
+        alert("Failed to save file name.");
+      }
+    } catch (error) {
+      console.error("Error saving file name:", error);
+      alert("An error occurred while saving the file name.");
+    }
+  };
+
+  // const [containers, setContainers] = useState([]); // State to hold the containers
+  const [containers, setContainers] = useState(() => {
+    const savedContainers = localStorage.getItem("containers");
+    return savedContainers ? JSON.parse(savedContainers) : [{ id: 1, type: 'text', value: '', isTouched: false }];
+  });
   // Effect to retrieve theme from localStorage
+  useEffect(() => {
+    localStorage.setItem("containers", JSON.stringify(containers));
+  }, [containers]);
+  
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     setIsDarkMode(savedTheme === "dark");
   }, []);
-
+  
+  const toggleTheme = () => {
+    const newTheme = isDarkMode ? "light" : "dark";
+    console.log("Toggling theme to:", newTheme); // Debugging
+    setIsDarkMode(!isDarkMode);
+    localStorage.setItem("theme", newTheme);
+  };
   // Handle button clicks to add different types of containers
   const handleButtonClick = (type) => {
     setContainers(prev => [
@@ -40,6 +183,9 @@ const WorkSpace = () => {
     ]);
   };
 
+  
+
+  
   // Handle input change inside a container
   const handleInputChange = (id, e) => {
     const updatedContainers = containers.map(container => {
@@ -57,13 +203,52 @@ const WorkSpace = () => {
     setContainers(updatedContainers);
   };
 
+
+  const handleNavigate = () => {
+    navigate('/response');
+  };
+
+ 
+ 
+
+  const handleBlur = (id) => {
+    setContainers((prev) =>
+      prev.map((container) =>
+        container.id === id ? { ...container, isTouched: true } : container
+      )
+    );
+  };
+
+ 
+
+  const handleCopyLink = () => {
+    const link = window.location.href; // Get current page URL
+    navigator.clipboard.writeText(link); // Copy the link to clipboard
+    setShareMessage("Link copied");
+    setTimeout(() => setShareMessage(""), 2000); // Hide message after 3 seconds
+  };
+
+  const handleOptionSelect = (option) => {
+    setSelectedOption(option);
+    setDropdownOpen(false);
+  };
   return (
-    <div className={`workspace-component ${isDarkMode ? 'dark' : 'light'}`}>
-      <header className="workspace-header">
-        <input type="text" placeholder="Enter Form Name" className="form-name" />
-        <div className="nav-btn">
-          <button>flow</button>
-          <button>Response</button>
+<div className={`workspace-component ${isDarkMode ? "dark-mode" : "light-mode"}`}>
+
+<header className="workspace-header">
+
+<input
+        type="text"
+        value={fileName}
+        onChange={handleFileNameChange}
+        onKeyDown={handleKeyPress} // Listen for the Enter key
+        placeholder="Enter file name" className='form-name'
+      />
+                <div className="nav-btn">
+          <div className="flow-btn">
+          <button >flow</button>
+          </div>
+          <button onClick={handleNavigate} >Response</button>
         </div>
         <div className="nav-toogle">
           <span className="light-text">Light</span>
@@ -80,53 +265,67 @@ const WorkSpace = () => {
           </span>
         </div>
         <div className="header-controls">
-          <button className="share">Share</button>
+        <button onClick={handleCopyLink} className="share">Share</button>
+       
+
           <button className="save">Save</button>
           <button className="close"><img src={close} alt="" /></button>
         </div>
       </header>
+      
       <main className="workspace-main">
         <aside className="toolbox">
           <div className="tool-section">
             <h3>Bubbles</h3>
             <div className="button-row">
-              <button onClick={() => handleButtonClick('text')}><img src={button} alt="" /></button>
-              <button onClick={() => handleButtonClick('img')}><img src={button1} alt="" /></button>
+              <button className='msg' onClick={() => handleButtonClick('text')}><img src={msg} alt="" />Text</button>
+              <button onClick={() => handleButtonClick('img')}><img src={image} alt="" />Images</button>
             </div>
 
             <div className="button-row">
-              <button onClick={() => handleButtonClick('video')}><img src={button2} alt="" /></button>
-              <button onClick={() => handleButtonClick('gif')}><img src={button3} alt="" /></button>
+              <button onClick={() => handleButtonClick('video')}><img src={video} alt="" />Video</button>
+              <button onClick={() => handleButtonClick('gif')}><img src={gif} alt="" />GIF</button>
             </div>
           </div>
           <div className="tool-section">
             <h3>Inputs</h3>
             <div className="button-row">
-              <button onClick={() => handleButtonClick('input-text')}><img src={button4} alt="" /></button>
-              <button onClick={() => handleButtonClick('input-number')}><img src={button5} alt="" /></button>
+              <button onClick={() => handleButtonClick('input-text')}><img src={text} alt="" />Text</button>
+              <button onClick={() => handleButtonClick('input-number')}><img src={hash} alt="" />Number</button>
             </div>
 
             <div className="button-row">
-              <button onClick={() => handleButtonClick('input-email')}><img src={button6} alt="" /></button>
-              <button onClick={() => handleButtonClick('input-phone')}><img src={button7} alt="" /></button>
+              <button onClick={() => handleButtonClick('input-email')}><img src={attherate} alt="" />Email</button>
+              <button onClick={() => handleButtonClick('input-phone')}><img src={phone} alt="" />Phone</button>
             </div>
 
             <div className="button-row">
-              <button onClick={() => handleButtonClick('input-date')}><img src={button8} alt="" /></button>
-              <button onClick={() => handleButtonClick('input-rating')}><img src={button9} alt="" /></button>
+              <button onClick={() => handleButtonClick('input-date')}><img src={date} alt="" />Date</button>
+              <button onClick={() => handleButtonClick('input-rating')}><img src={star} alt="" />Rating</button>
             </div>
 
             <div className="button-row">
-              <button onClick={() => handleButtonClick('input-button')}><img src={button10} alt="" /></button>
+              <button onClick={() => handleButtonClick('input-button')}><img src={tick} alt="" />Buttons</button>
             </div>
           </div>
         </aside>
         <section className="canvas">
+
           <div className="start-node">
-            <img src={flag} alt="" className="flag" /> Start
+          <img
+    src={isDarkMode ? flag : blueFlag} // Show blueFlag in light mode
+    alt="flag"
+    className="flag"
+  />
+          Start
           </div>
           
-
+  {/* Show Share Message */}
+  {shareMessage && (
+    <div className="canvas-message">
+      <p>{shareMessage}</p> {/* Display the share message */}
+    </div>
+  )}
           {/* Render all containers dynamically */}
           <div className="containers">
          
@@ -136,110 +335,108 @@ const WorkSpace = () => {
                 {container.type === 'text' && (
                   <div className="text-container">
                   <h1>Text</h1>
-                  <div className="input-wrapper">
-                    <span className="input-icon">
-                      <img src={msg} alt="icon" />
-                    </span>
-                    <input
-                      type="text"
-                      value={container.value}
-                      onChange={(e) => handleInputChange(container.id, e)}
-                      placeholder="Click here to edit"
-                    />
-                  </div>
+               
+                   <div className="input-wrapper">
+                <span className="input-icon">
+                  <img src={msg} alt="icon" />
+                </span>
+                <input
+  type="text"
+  value={container.value}
+  onChange={(e) => handleInputChange(container.id, e)}
+  onBlur={() => handleBlur(container.id)}
+  placeholder="Click here to edit"
+  className={`text-input ${container.isTouched && !container.value ? 'input-error' : ''}`}
+/>
+{container.isTouched && !container.value && (
+  <span className="error-message">Required Field</span>
+)}
+              </div>
+             
                 </div>
                 
                 )}
                 {container.type === 'img' && (
                   <div className="img-container">
-                    <h1>Image Container</h1>
-                    <img src={button1} alt="Image" />
+                    <h1>Image 1 </h1>
+                     <input
+                      type="text"
+                      value={container.value}
+                      onChange={(e) => handleInputChange(container.id, e)}
+                      placeholder="Click to add link"
+                    />
                   </div>
+                  
                 )}
                 {container.type === 'video' && (
                   <div className="video-container">
-                    <h1>Video Container</h1>
-                    <video controls width="300">
-                      <source src="path_to_video.mp4" type="video/mp4" />
-                    </video>
-                  </div>
-                )}
-                {container.type === 'gif' && (
-                  <div className="gif-container">
-                    <h1>GIF Container</h1>
-                    <img src="path_to_gif.gif" alt="GIF" />
-                  </div>
-                )}
-                {container.type === 'input-text' && (
-                  <div className="input-text-container">
-                    <h1>Input Text</h1>
+                    <h1>Video 1</h1>
                     <input
                       type="text"
                       value={container.value}
                       onChange={(e) => handleInputChange(container.id, e)}
-                      placeholder="Enter text"
+                      placeholder="Click to add link"
                     />
+                  </div>
+                )}
+                {container.type === 'gif' && (
+                  <div className="gif-container">
+                    <h1>GIF 1</h1>
+                    <input
+                      type="text"
+                      value={container.value}
+                      onChange={(e) => handleInputChange(container.id, e)}
+                      placeholder="Click to add link"
+                    />
+                  </div>
+                )}
+                {container.type === 'input-text' && (
+                  <div className="input-text-container">
+                    <h1>Input Text 1</h1>
+                   <p>Hint : User will input a text on his form</p>
                   </div>
                 )}
                 {container.type === 'input-number' && (
                   <div className="input-number-container">
-                    <h1>Input Number</h1>
-                    <input
-                      type="number"
-                      value={container.value}
-                      onChange={(e) => handleInputChange(container.id, e)}
-                      placeholder="Enter number"
-                    />
+                    <h1>Input Number 1</h1>
+                   <p>Hint : User will input a text on his form</p>
                   </div>
                 )}
                 {container.type === 'input-email' && (
                   <div className="input-email-container">
-                    <h1>Input Email</h1>
-                    <input
-                      type="email"
-                      value={container.value}
-                      onChange={(e) => handleInputChange(container.id, e)}
-                      placeholder="Enter email"
-                    />
+                    <h1>Input Email 1</h1>
+                   <p>Hint : User will input a email on his form</p>
+        
                   </div>
                 )}
                 {container.type === 'input-phone' && (
                   <div className="input-phone-container">
-                    <h1>Input Phone</h1>
-                    <input
-                      type="tel"
-                      value={container.value}
-                      onChange={(e) => handleInputChange(container.id, e)}
-                      placeholder="Enter phone number"
-                    />
+                    <h1>Input Phone 1</h1>
+                    <p>Hint : User will input a phone on his form</p>
                   </div>
                 )}
                 {container.type === 'input-date' && (
                   <div className="input-date-container">
-                    <h1>Input Date</h1>
-                    <input
-                      type="date"
-                      value={container.value}
-                      onChange={(e) => handleInputChange(container.id, e)}
-                    />
+                    <h1>Input Date 1</h1>
+                    <p>Hint : User will select a date</p>
                   </div>
                 )}
                 {container.type === 'input-rating' && (
                   <div className="input-rating-container">
-                    <h1>Input Rating</h1>
-                    <input
-                      type="number"
-                      value={container.value}
-                      onChange={(e) => handleInputChange(container.id, e)}
-                      placeholder="Rate out of 5"
-                    />
+                    <h1>Input Rating 1</h1>
+                   <p>Hint : User will tap to rate out of 5</p>
                   </div>
                 )}
                 {container.type === 'input-button' && (
-                  <div className="input-button-container">
-                    <h1>Input Button</h1>
-                    <button>{container.value || "Click Me"}</button>
-                  </div>
+                 <div className="input-button-container">
+                 <h1>Input Button1</h1>
+                 <input
+                   type="text"
+                   value={container.value}
+                   onChange={(e) => handleInputChange(container.id, e)}
+                 />
+               </div>
+               
                   
                 )}
                <button onClick={() => handleDelete(container.id)} className="delete-button">
@@ -250,8 +447,11 @@ const WorkSpace = () => {
           </div>
         </section>
       </main>
+       
     </div>
+    
   );
+  
 };
 
 export default WorkSpace;

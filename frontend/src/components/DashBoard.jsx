@@ -277,6 +277,7 @@ const DashBoard = () => {
           // Optionally, update localStorage for persistence
           localStorage.setItem("files", JSON.stringify(updatedFiles));
           return updatedFiles;
+          
         });
       } else {
         alert("Failed to create form. Please try again.");
@@ -288,7 +289,10 @@ const DashBoard = () => {
   };
   
 
-
+  const handleItemClick = (fileId) => {
+    // Navigate to the workspace with the fileId as a parameter
+    navigate(`/workspace`, { state: { fileId } });
+  };
 
 
 
@@ -307,11 +311,14 @@ const DashBoard = () => {
         // Immediately remove the deleted file from the frontend state (files or typeBots)
         setFiles((prevFiles) => {
           const updatedFiles = prevFiles.filter((file) => file._id !== typeBotToDelete);
-  
+          console.log(response.data);  // Log to check the response
+
           // Update localStorage to reflect the removal immediately
           localStorage.setItem("files", JSON.stringify(updatedFiles));
   
           return updatedFiles;
+          console.log(updatedFiles);  // Log the state after update
+
         });
   
         // Close the delete confirmation popup
@@ -332,9 +339,7 @@ const DashBoard = () => {
     setTypeBotToDelete(null);
   };
 
-  const handleItemClick = (botId) => {
-    navigate(`/workspace`); // Navigate to the workshop page for the selected bot
-  };
+ 
   return (
     <div className={`dashboard ${isDarkMode ? "dark-mode" : "light-mode"}`}>
       <nav className="Navbar">
@@ -426,7 +431,7 @@ const DashBoard = () => {
           <span className="typebot-text">Create a typebot</span>
         </button>
        
-<div className="typebot-container">
+        <div className="typebot-container">
   {files.length > 0 ? (
     files.map((file) => (
       <div key={file._id} className="typebot-item">
@@ -440,6 +445,7 @@ const DashBoard = () => {
     ))
   ) : null} {/* Do not render anything if no files */}
 </div>
+
 
 
 

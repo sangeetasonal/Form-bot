@@ -343,7 +343,6 @@ margin-bottom: -45px;
 }
 /* Light and Dark Mode Styles */
 .dark-mode {
-  --navbar-text: #ffffff;
   --navbar-border-color: #444;
   --workspace-border-color: #444; 
   --slider-bg: #555;
@@ -353,15 +352,15 @@ margin-bottom: -45px;
 
 .light-mode {
   --navbar-bg: #ffffff;
-  /* --navbar-: #000000; */
-  --navbar-border-color: #000000; 
-  --workspace-border-color: #000000; 
+  --navbar-border-color: #D6D6D6; 
+  --workspace-border-color:#D6D6D6; 
   --slider-bg: #ccc;
   --border-color: #ddd;
   --content-bg: #ffffff; 
   --createfolder-bg: #2c2c2c;
   --typebot-bg: rgba(51, 48, 48, 0.5); 
-  ;
+  --navbar-text: #000;
+  
 }
 
 
@@ -478,7 +477,7 @@ border: 1px solid rgba(71, 71, 74, 1)
 }
 .popup-share input{
   width: 95%;
-  height: 35px;
+  height: 25px;
   padding: 10px;
   margin-bottom: 3px;
   border-radius: 12px;

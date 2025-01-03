@@ -78,35 +78,7 @@ const WorkSpace = () => {
     }
   };
   
-// const saveContainers = async () => {
-//   if (!fileId) {
-//     alert("Invalid file ID");
-//     return;
-//   }
 
-//   try {
-//     const token = localStorage.getItem("token");
-//     const response = await axios.patch(
-//       `${API_URL}/api/auth/files/${fileId}`,
-//       { containers },
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-
-//     if (response.status === 200) {
-//       alert("Containers saved successfully!");
-//     } else {
-//       alert("Failed to save containers.");
-//     }
-//   } catch (error) {
-//     console.error("Error saving containers:", error);
-//     alert("An error occurred while saving containers.");
-//   }
-// };
 
 
   const handleFileNameChange = (e) => {
@@ -255,27 +227,7 @@ const WorkSpace = () => {
     setIsDarkMode(!isDarkMode);
     localStorage.setItem("theme", newTheme);
   };
-  // Handle button clicks to add different types of containers
-  // const handleButtonClick = (type) => {
-  //   setContainers(prev => [
-  //     ...prev, 
-  //     { id: Date.now(), type: type, value: '' }
-  //   ]);
-  // };
-
-  
-
-  
-  // Handle input change inside a container
-  // const handleInputChange = (id, e) => {
-  //   const updatedContainers = containers.map(container => {
-  //     if (container.id === id) {
-  //       return { ...container, value: e.target.value };
-  //     }
-  //     return container;
-  //   });
-  //   setContainers(updatedContainers);
-  // };
+ 
 
   const handleClose = () => {
     navigate(-1); // This will take the user back to the previous page

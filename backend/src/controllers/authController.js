@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs"); 
 const Folder = require("../models/Folder");
 const File = require("../models/File");
-const Response = require('../models/Response'); // Ensure the model path is correct
+const Response = require('../models/Response'); 
 
 
 // Generate JWT
@@ -108,7 +108,6 @@ const createFolder = async (req, res) => {
 };
 
 // Create a new file (inside a folder or standalone)
-// Create a new file (inside a folder or standalone)
 const createFile = async (req, res) => {
   try {
     const { name, folderId,  } = req.body;
@@ -125,14 +124,13 @@ const createFile = async (req, res) => {
 
     // Handle folderId if it's not provided
     if (folderId && folderId === 'null') {
-      // Optional: handle specific behavior for null folderId
       console.log("Folder ID is null, creating file without a folder.");
     }
 
     // Create the file
     const file = new File({
       name,
-      folderId: folderId !== undefined ? folderId : null, // Ensure folderId is either provided or null
+      folderId: folderId !== undefined ? folderId : null, 
       createdBy: userId,
     });
 
@@ -212,10 +210,10 @@ const deleteFolder = async (req, res) => {
 
 const updateFile = async (req, res) => {
   try {
-    const { id } = req.params;  // Extract file ID from URL parameters
-    const { name } = req.body;  // Extract new name from request body
+    const { id } = req.params;  
+    const { name } = req.body;  
 
-    console.log("Updating file with ID:", id);  // Log the ID for debugging
+    console.log("Updating file with ID:", id); 
 
     // Check if ID is valid
     if (!id) {

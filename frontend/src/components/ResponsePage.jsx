@@ -41,30 +41,6 @@ const ResponsePage = () => {
       },
     ],
   };
-  // const options = {
-  //   responsive: true,
-  //   plugins: {
-  //     tooltip: {
-  //       callbacks: {
-  //         label: function (tooltipItem) {
-  //           return `${tooltipItem.label}: ${tooltipItem.raw}%`; // Format the tooltip text
-  //         },
-  //       },
-  //     },
-  //     legend: {
-  //       display: false, // Hide the legend to avoid showing the labels above the chart
-  //     },
-  //     datalabels: {
-  //       color: '#fff', // Set the color of the data labels
-  //       font: {
-  //         weight: 'bold', // Make the data labels bold
-  //       },
-  //       formatter: (value) => `${value}%`, // Format the data label to show percentage
-  //       display: (context) => context.dataset.data[context.dataIndex] > 0, // Only show labels for non-zero values
-  //     },
-  //   },
-  //   cutout: 90, 
-  // };
 
   const options = {
     responsive: true,

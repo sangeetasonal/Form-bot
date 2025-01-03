@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs"); 
 const Folder = require("../models/Folder");
 const File = require("../models/File");
+const Response = require('../models/Response'); // Ensure the model path is correct
+
 
 // Generate JWT
 const generateToken = (id) => {
@@ -109,7 +111,7 @@ const createFolder = async (req, res) => {
 // Create a new file (inside a folder or standalone)
 const createFile = async (req, res) => {
   try {
-    const { name, folderId } = req.body;
+    const { name, folderId,  } = req.body;
     const userId = req.user.id; // Use `req.user.id` from authenticated token
 
     // Log for debugging
@@ -151,8 +153,6 @@ const createFile = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
-
 // Get all folders and files created by the user
 const getFoldersAndFiles = async (req, res) => {
   try {
@@ -242,6 +242,47 @@ const updateFile = async (req, res) => {
   }
 };
 
+// Partial Update File (PATCH)
+const partialUpdateFile = async (req, res) => {
+  const { id } = req.params; // Get file ID from the URL
+  const updates = req.body; // Get fields to update from the request body
+
+  try {
+    const updatedFile = await File.findByIdAndUpdate(id, updates, { new: true });
+    if (!updatedFile) {
+      return res.status(404).json({ message: "File not found" });
+    }
+    res.status(200).json({ message: "File partially updated", updatedFile });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating file", error });
+  }
+};
+
+// Controller for saving a response
+const saveResponse = async (req, res) => {
+  try {
+    const { formId, replies } = req.body;
+
+    const newResponse = new Response({ formId, replies });
+    await newResponse.save();
+
+    res.status(201).json({ message: "Response saved successfully" });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Failed to save response" });
+  }
+};
+
+// Controller for fetching all responses
+const getAllResponses = async (req, res) => {
+  try {
+    const responses = await Response.find();
+    res.status(200).json(responses);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Failed to fetch responses" });
+  }
+};
 
 module.exports = { registerUser,
                    loginUser ,
@@ -250,5 +291,9 @@ module.exports = { registerUser,
                    createFile,
                    getFoldersAndFiles,
                    deleteFolder,
-                   updateFile,
-                   deleteFile};
+                   updateFile, 
+                   deleteFile,
+                   partialUpdateFile,
+                   saveResponse, 
+                   getAllResponses
+                  };

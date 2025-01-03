@@ -32,6 +32,7 @@ const DashBoard = () => {
  const [typeBotToDelete, setTypeBotToDelete] = useState(null);
  const [isSelected, setIsSelected] = useState(false);
 
+ const [containers, setContainers] = useState([]); // Define the containers state here
 
 
  useEffect(() => {
@@ -270,15 +271,18 @@ const DashBoard = () => {
       if (response.status === 201 && response.data.file) {
         const createdTypeBot = response.data.file;
   
-        // Update frontend state immediately
-        setFiles((prevFiles) => {
+         // Update frontend state immediately
+         setFiles((prevFiles) => {
           const updatedFiles = [...prevFiles, createdTypeBot];
-  
+
           // Optionally, update localStorage for persistence
           localStorage.setItem("files", JSON.stringify(updatedFiles));
           return updatedFiles;
-          
-        });
+      });
+
+      // After creating the form, reset containers to empty
+      setContainers([]);  // Reset containers when creating a new form
+      console.log("Containers reset after creating new form.");
       } else {
         alert("Failed to create form. Please try again.");
       }
@@ -287,11 +291,13 @@ const DashBoard = () => {
       alert("An error occurred while creating the form.");
     }
   };
-  
 
   const handleItemClick = (fileId) => {
+  
+    setContainers([]);
     // Navigate to the workspace with the fileId as a parameter
     navigate(`/workspace`, { state: { fileId } });
+    
   };
 
 

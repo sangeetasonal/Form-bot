@@ -5,7 +5,7 @@ const connectDB = require("./config/db");
 
 // Import Routes
 const authRoutes = require("./routes/authRoutes");
-
+const responseRoutes = require("./routes/responseRoutes"); 
 dotenv.config();
 connectDB();
 
@@ -14,10 +14,11 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors());
-app.use(cors({ origin: "http://localhost:3000" })); // Adjust to match your frontend URL
-
+app.use(cors({ origin: "http://localhost:3000" })); 
 // Routes
-app.use("/api/auth", authRoutes);  // This handles routes like /register and /login defined in authRoutes.js
+app.use("/api/auth", authRoutes);  
+app.use("/api/responses", responseRoutes); 
+
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

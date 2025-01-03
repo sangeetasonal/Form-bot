@@ -27,14 +27,87 @@ const WorkSpace = () => {
   const { fileId } = state || {}; // Destructure fileId from the passed state
 
   const [fileName, setFileName] = useState('');
+  const [isSaved, setIsSaved] = useState(false); // Track if data is saved
 
+ 
   useEffect(() => {
-    if (fileId) {
-      // You can fetch the file's details here using fileId
-      // Example: axios.get(`/api/files/${fileId}`)
-      // Update the fileName with the response from the backend
+    if (!fileId) {
+      console.log("No fileId, resetting containers to empty.");
+      setContainers([]); // Reset containers for new forms
+      return;
     }
-  }, [fileId]);
+  
+    const savedContainers = localStorage.getItem(`containers_${fileId}`);
+    console.log("Loaded saved containers:", savedContainers);
+    if (savedContainers) {
+      setContainers(JSON.parse(savedContainers));
+    } else {
+      console.log("No saved containers for this fileId.");
+    }
+  }, [fileId]);  // This effect runs when fileId changes
+  
+  
+   const saveContainers = async () => {
+    if (!fileId) {
+      alert("Invalid file ID");
+      return;
+    }
+    
+    try {
+      // Save containers to localStorage
+      localStorage.setItem(`containers_${fileId}`, JSON.stringify(containers));
+      console.log("Containers saved:", containers); // Debugging line
+  
+      // Also save containers to backend (if needed)
+      const token = localStorage.getItem("token");
+      const response = await axios.patch(`${API_URL}/api/auth/files/${fileId}`, { containers }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+      
+      if (response.status === 200) {
+        alert("Containers saved successfully!");
+      } else {
+        alert("Failed to save containers.");
+      }
+    } catch (error) {
+      console.error("Error saving containers:", error);
+      alert("An error occurred while saving containers.");
+    }
+  };
+  
+// const saveContainers = async () => {
+//   if (!fileId) {
+//     alert("Invalid file ID");
+//     return;
+//   }
+
+//   try {
+//     const token = localStorage.getItem("token");
+//     const response = await axios.patch(
+//       `${API_URL}/api/auth/files/${fileId}`,
+//       { containers },
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+
+//     if (response.status === 200) {
+//       alert("Containers saved successfully!");
+//     } else {
+//       alert("Failed to save containers.");
+//     }
+//   } catch (error) {
+//     console.error("Error saving containers:", error);
+//     alert("An error occurred while saving containers.");
+//   }
+// };
+
 
   const handleFileNameChange = (e) => {
     setFileName(e.target.value);
@@ -53,6 +126,9 @@ const WorkSpace = () => {
     }
   };
   
+
+
+
   const handleKeyPress = async (e) => {
     if (e.key === 'Enter') {
       console.log('Enter pressed, saving file name:', fileName);
@@ -125,6 +201,11 @@ const WorkSpace = () => {
   };
   
 
+
+
+
+  
+
   const saveFileName = async () => {
     console.log("fileId:", fileId); // Debugging line
 
@@ -154,14 +235,13 @@ const WorkSpace = () => {
     }
   };
 
-  // const [containers, setContainers] = useState([]); // State to hold the containers
   const [containers, setContainers] = useState(() => {
-    const savedContainers = localStorage.getItem("containers");
-    return savedContainers ? JSON.parse(savedContainers) : [{ id: 1, type: 'text', value: '', isTouched: false }];
+    const savedContainers = localStorage.getItem(`containers_${fileId}`);
+    return savedContainers ? JSON.parse(savedContainers) : []; // Return an empty array if no saved data
   });
   // Effect to retrieve theme from localStorage
   useEffect(() => {
-    localStorage.setItem("containers", JSON.stringify(containers));
+    
   }, [containers]);
   
   useEffect(() => {
@@ -176,18 +256,46 @@ const WorkSpace = () => {
     localStorage.setItem("theme", newTheme);
   };
   // Handle button clicks to add different types of containers
-  const handleButtonClick = (type) => {
-    setContainers(prev => [
-      ...prev, 
-      { id: Date.now(), type: type, value: '' }
-    ]);
-  };
+  // const handleButtonClick = (type) => {
+  //   setContainers(prev => [
+  //     ...prev, 
+  //     { id: Date.now(), type: type, value: '' }
+  //   ]);
+  // };
 
   
 
   
   // Handle input change inside a container
+  // const handleInputChange = (id, e) => {
+  //   const updatedContainers = containers.map(container => {
+  //     if (container.id === id) {
+  //       return { ...container, value: e.target.value };
+  //     }
+  //     return container;
+  //   });
+  //   setContainers(updatedContainers);
+  // };
+
+  const handleClose = () => {
+    navigate(-1); // This will take the user back to the previous page
+  };
+
+
+  const handleButtonClick = (containerType) => {
+    const newContainer = { 
+      id: Date.now(), 
+      type: containerType, 
+      value: '', 
+      isTouched: false 
+    };
+    setContainers(prev => [...prev, newContainer]);
+    console.log('Added new container:', newContainer); // Debugging line
+  };
+
+
   const handleInputChange = (id, e) => {
+    // Update the value of the input field for the specific container
     const updatedContainers = containers.map(container => {
       if (container.id === id) {
         return { ...container, value: e.target.value };
@@ -196,21 +304,22 @@ const WorkSpace = () => {
     });
     setContainers(updatedContainers);
   };
-
-  // Handle delete container
+ 
   const handleDelete = (id) => {
+    // Filter out the container with the matching id
     const updatedContainers = containers.filter(container => container.id !== id);
-    setContainers(updatedContainers);
+    setContainers(updatedContainers); // Set the new array as the updated state
   };
-
 
   const handleNavigate = () => {
     navigate('/response');
   };
 
- 
- 
 
+
+
+
+  
   const handleBlur = (id) => {
     setContainers((prev) =>
       prev.map((container) =>
@@ -219,10 +328,15 @@ const WorkSpace = () => {
     );
   };
 
- 
+  // Example function to handle button clicks in the toolbox
+  const handleToolboxButtonClick = (container) => {
+    setContainers((prevContainers) => [...prevContainers, container]);
+  };
 
+  
+  
   const handleCopyLink = () => {
-    const link = window.location.href; // Get current page URL
+    const link = `${window.location.origin}/sharedPage?containers=${encodeURIComponent(JSON.stringify(containers))}`;
     navigator.clipboard.writeText(link); // Copy the link to clipboard
     setShareMessage("Link copied");
     setTimeout(() => setShareMessage(""), 2000); // Hide message after 3 seconds
@@ -268,8 +382,8 @@ const WorkSpace = () => {
         <button onClick={handleCopyLink} className="share">Share</button>
        
 
-          <button className="save">Save</button>
-          <button className="close"><img src={close} alt="" /></button>
+          <button onClick={saveContainers} className="save">Save</button>
+          <button onClick={handleClose}  className="close"><img src={close} alt="" /></button>
         </div>
       </header>
       

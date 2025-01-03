@@ -5,7 +5,7 @@ const connectDB = require("./config/db");
 
 // Import Routes
 const authRoutes = require("./routes/authRoutes");
-const responseRoutes = require("./routes/responseRoutes"); 
+// const responseRoutes = require("./routes/responseRoutes"); 
 dotenv.config();
 connectDB();
 
@@ -17,7 +17,7 @@ app.use(cors());
 app.use(cors({ origin: "http://localhost:3000" })); 
 // Routes
 app.use("/api/auth", authRoutes);  
-app.use("/api/responses", responseRoutes); 
+// app.use("/api/responses", responseRoutes); 
 
 
 // Error Handling Middleware

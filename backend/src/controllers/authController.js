@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs"); 
 const Folder = require("../models/Folder");
 const File = require("../models/File");
-const Response = require('../models/Response'); 
 
 
 // Generate JWT
@@ -256,31 +255,6 @@ const partialUpdateFile = async (req, res) => {
   }
 };
 
-// Controller for saving a response
-const saveResponse = async (req, res) => {
-  try {
-    const { formId, replies } = req.body;
-
-    const newResponse = new Response({ formId, replies });
-    await newResponse.save();
-
-    res.status(201).json({ message: "Response saved successfully" });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: "Failed to save response" });
-  }
-};
-
-// Controller for fetching all responses
-const getAllResponses = async (req, res) => {
-  try {
-    const responses = await Response.find();
-    res.status(200).json(responses);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: "Failed to fetch responses" });
-  }
-};
 
 module.exports = { registerUser,
                    loginUser ,
@@ -292,6 +266,5 @@ module.exports = { registerUser,
                    updateFile, 
                    deleteFile,
                    partialUpdateFile,
-                   saveResponse, 
-                   getAllResponses
+                 
                   };

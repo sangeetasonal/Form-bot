@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import "./logIn.css";
 import { useNavigate } from "react-router-dom";
 import sidetriangle from "../assets/Group 2.png";
 import sidesemicircle from "../assets/Ellipse 2.png";
 import bottomcircle from "../assets/Ellipse 1.png";
 import googleIcon from "../assets/Google Icon.png";
 import arrowBackIcon from "../assets/arrow_back.png";
+import './LogIn.css';
 
 const API_URL = "http://localhost:5000"; // Replace with your backend URL
 

@@ -20,7 +20,7 @@ import { useLocation } from 'react-router-dom'; // Make sure this is imported
 
 
 import './WorkSpace.css';
-const API_URL = "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const WorkSpace = () => {
   const { state } = useLocation(); // Get the passed state
@@ -32,17 +32,14 @@ const WorkSpace = () => {
  
   useEffect(() => {
     if (!fileId) {
-      console.log("No fileId, resetting containers to empty.");
       setContainers([]); // Reset containers for new forms
       return;
     }
   
     const savedContainers = localStorage.getItem(`containers_${fileId}`);
-    console.log("Loaded saved containers:", savedContainers);
     if (savedContainers) {
       setContainers(JSON.parse(savedContainers));
     } else {
-      console.log("No saved containers for this fileId.");
     }
   }, [fileId]);  // This effect runs when fileId changes
   
@@ -56,11 +53,10 @@ const WorkSpace = () => {
     try {
       // Save containers to localStorage
       localStorage.setItem(`containers_${fileId}`, JSON.stringify(containers));
-      console.log("Containers saved:", containers); // Debugging line
   
       // Also save containers to backend (if needed)
       const token = localStorage.getItem("token");
-      const response = await axios.patch(`${API_URL}/api/auth/files/${fileId}`, { containers }, {
+      const response = await axios.patch(`${API_URL}api/auth/files/${fileId}`, { containers }, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json"
@@ -73,7 +69,6 @@ const WorkSpace = () => {
         alert("Failed to save containers.");
       }
     } catch (error) {
-      console.error("Error saving containers:", error);
       alert("An error occurred while saving containers.");
     }
   };
@@ -92,7 +87,6 @@ const WorkSpace = () => {
   const handleShare = () => setShowSharePopup(true); // Show Share Popup
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      console.log("Enter key pressed!");
       // Call the function to update the file name when Enter is pressed
       handleNameChange();
     }
@@ -103,12 +97,11 @@ const WorkSpace = () => {
 
   const handleKeyPress = async (e) => {
     if (e.key === 'Enter') {
-      console.log('Enter pressed, saving file name:', fileName);
       
       try {
         const token = localStorage.getItem("token"); // Retrieve the token for authorization
         const response = await axios.put(
-          `http://localhost:5000/api/auth/files/${fileId}`, // The endpoint to update the file
+         `${API_URL}api/auth/files/${fileId}`, // The endpoint to update the file
           { name: fileName }, // The data you want to update (new file name)
           {
             headers: {
@@ -119,22 +112,17 @@ const WorkSpace = () => {
         );
   
         if (response.status === 200) {
-          console.log("File updated successfully:", response.data);
           alert(`File name updated to: ${fileName}`);
         } else {
-          console.error("Error updating file:", response);
           alert("Failed to update the file. Please try again.");
         }
       } catch (error) {
-        console.error("Error updating file:", error);
         alert("An error occurred while updating the file.");
       }
     }
   };
   
   const handleNameChange = async () => {
-    console.log("File Name:", fileName);
-    console.log("File ID:", fileId);
   
     if (!fileName.trim()) {
       alert("File name is required!");
@@ -150,7 +138,7 @@ const WorkSpace = () => {
       const token = localStorage.getItem("token");
   
       const response = await axios.put(
-        `${API_URL}/api/auth/files/update`,
+        `${API_URL}api/auth/files/update`,
         { fileId, name: fileName },
         {
           headers: {
@@ -167,7 +155,6 @@ const WorkSpace = () => {
         alert("Failed to update file name.");
       }
     } catch (error) {
-      console.error("Error updating file name:", error);
       alert("An error occurred while updating the file name.");
     }
   };
@@ -179,14 +166,13 @@ const WorkSpace = () => {
   
 
   const saveFileName = async () => {
-    console.log("fileId:", fileId); // Debugging line
 
     try {
       const token = localStorage.getItem("token");
   
       // Assuming `fileId` and `fileName` are part of your component's state
       const response = await axios.patch(
-        `${API_URL}/api/auth/files/${fileId}`,
+        `${API_URL}api/auth/files/${fileId}`,
         { name: fileName },
         {
           headers: {
@@ -202,7 +188,6 @@ const WorkSpace = () => {
         alert("Failed to save file name.");
       }
     } catch (error) {
-      console.error("Error saving file name:", error);
       alert("An error occurred while saving the file name.");
     }
   };
@@ -223,7 +208,6 @@ const WorkSpace = () => {
   
   const toggleTheme = () => {
     const newTheme = isDarkMode ? "light" : "dark";
-    console.log("Toggling theme to:", newTheme); // Debugging
     setIsDarkMode(!isDarkMode);
     localStorage.setItem("theme", newTheme);
   };
@@ -242,7 +226,6 @@ const WorkSpace = () => {
       isTouched: false 
     };
     setContainers(prev => [...prev, newContainer]);
-    console.log('Added new container:', newContainer); // Debugging line
   };
 
 

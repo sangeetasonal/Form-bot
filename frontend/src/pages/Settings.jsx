@@ -7,6 +7,7 @@ import showpassword from "../assets/show-password.png";
 import hidepassword from "../assets/hide-password.png"; 
 import lock from "../assets/lock.png";
 import logout from "../assets/Logout.png";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const Settings = () => {
         return;
       }
 
-      const response = await fetch("http://localhost:5000/api/auth/update", {
+      const response = await fetch(`${API_URL}/api/auth/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -47,7 +48,6 @@ const Settings = () => {
         toast.error(data.message || "Failed to update profile."); // Display error toast
       }
     } catch (error) {
-      console.error("Error updating profile:", error);
       setError("An error occurred. Please try again.");
       toast.error("An error occurred. Please try again."); // Display error toast
     }

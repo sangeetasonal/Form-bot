@@ -25,9 +25,7 @@ const ResponsePage = () => {
   }, []);
   
   const toggleTheme = () => {
-    const newTheme = isDarkMode ? "light" : "dark";
-    console.log("Toggling theme to:", newTheme); // Debugging
-    setIsDarkMode(!isDarkMode);
+    const newTheme = isDarkMode ? "light" : "dark";    setIsDarkMode(!isDarkMode);
     localStorage.setItem("theme", newTheme);
   };
 

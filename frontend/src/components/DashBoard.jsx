@@ -10,7 +10,7 @@ import dropsvg from "../assets/dropdown.png"
 import axios from 'axios';
 
 
-const API_URL = "http://localhost:5000";
+const API_URL = "https://form-bot-6.onrender.com";
 
 const DashBoard = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -42,7 +42,7 @@ const DashBoard = () => {
     if (token) {
       try {
         // Fetch user details
-        const userResponse = await fetch(`${API_URL}/api/user`, {
+        const userResponse = await fetch("https://form-bot-6.onrender.com/api/user", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -50,7 +50,6 @@ const DashBoard = () => {
           const user = await userResponse.json();
           setUsername(user.name);
         } else {
-          console.error("Failed to fetch user details.");
         }
 
         // Fetch folders and files
@@ -60,7 +59,6 @@ const DashBoard = () => {
 
         if (dataResponse.ok) {
           const data = await dataResponse.json();
-          console.log("Fetched data:", data); // Debug backend response
 
           setFolders(data.folders || []);
           setFiles(data.files || []);
@@ -68,10 +66,8 @@ const DashBoard = () => {
           localStorage.setItem("folders", JSON.stringify(data.folders || []));
           localStorage.setItem("files", JSON.stringify(data.files || []));
         } else {
-          console.error("Failed to fetch folders and files.");
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
       }
     }
   };
@@ -106,14 +102,13 @@ const DashBoard = () => {
 
 
   const handleDone = async () => {
-    console.log("Done button clicked");
   
     if (newFolderName.trim()) {
       try {
         const token = localStorage.getItem("token");
   
         const response = await axios.post(
-          "http://localhost:5000/api/auth/folders",
+          "https://form-bot-6.onrender.com/api/auth/folders",
           { name: newFolderName },
           {
             headers: {
@@ -123,7 +118,6 @@ const DashBoard = () => {
           }
         );
   
-        console.log("Response from backend:", response);
   
         if (response.status === 201 && response.data.folder) {
           const newFolder = response.data.folder;
@@ -131,7 +125,6 @@ const DashBoard = () => {
           // Update the folders state with the new folder
           setFolders((prevFolders) => {
             const updatedFolders = [...prevFolders, newFolder];
-            console.log("Updated folders:", updatedFolders);
   
             // Save updated folders to localStorage
             localStorage.setItem("folders", JSON.stringify(updatedFolders));
@@ -146,7 +139,6 @@ const DashBoard = () => {
           alert("Failed to create folder. Please try again.");
         }
       } catch (error) {
-        console.error("Error creating folder:", error);
         alert("Error creating folder. Please try again.");
       }
     } else {
@@ -176,7 +168,6 @@ const DashBoard = () => {
     const folder = folders[folderToDelete]; // Get the folder to be deleted
     
     if (!folder || !folder._id) {
-      console.error("Folder not found or missing _id.");
       alert("An error occurred while deleting the folder.");
       return;
     }
@@ -209,7 +200,6 @@ const DashBoard = () => {
         alert("Failed to delete the folder. Please try again.");
       }
     } catch (error) {
-      console.error("Error deleting folder:", error);
       alert("An error occurred while deleting the folder.");
     }
   };
@@ -282,12 +272,10 @@ const DashBoard = () => {
 
       // After creating the form, reset containers to empty
       setContainers([]);  // Reset containers when creating a new form
-      console.log("Containers reset after creating new form.");
       } else {
         alert("Failed to create form. Please try again.");
       }
     } catch (error) {
-      console.error("Error creating form:", error);
       alert("An error occurred while creating the form.");
     }
   };
@@ -317,13 +305,11 @@ const DashBoard = () => {
         // Immediately remove the deleted file from the frontend state (files or typeBots)
         setFiles((prevFiles) => {
           const updatedFiles = prevFiles.filter((file) => file._id !== typeBotToDelete);
-          console.log(response.data);  // Log to check the response
 
           // Update localStorage to reflect the removal immediately
           localStorage.setItem("files", JSON.stringify(updatedFiles));
   
           return updatedFiles;
-          console.log(updatedFiles);  // Log the state after update
 
         });
   
@@ -334,7 +320,6 @@ const DashBoard = () => {
         alert("Failed to delete the form. Please try again.");
       }
     } catch (error) {
-      console.error("Error deleting form:", error);
       alert("An error occurred while deleting the form.");
     }
   };

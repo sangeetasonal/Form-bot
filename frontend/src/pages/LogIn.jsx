@@ -7,7 +7,7 @@ import googleIcon from "../assets/Google Icon.png";
 import arrowBackIcon from "../assets/arrow_back.png";
 import './LogIn.css';
 
-const API_URL = "http://localhost:5000"; // Replace with your backend URL
+const API_URL = import.meta.env.VITE_API_URL;
 
 const LogIn = () => {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const LogIn = () => {
     e.preventDefault();
     
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
+      const response = await fetch(`${API_URL}api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -27,13 +27,11 @@ const LogIn = () => {
   
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Backend error:", errorData);
         setError(errorData.message || "Failed to login");
         return;
       }
   
       const data = await response.json();
-      console.log("Login successful:", data);
   
       // Store JWT token and user name in localStorage
       localStorage.setItem("token", data.token);
@@ -42,7 +40,6 @@ const LogIn = () => {
       // Redirect to the dashboard or desired page
       navigate("/dashboard");
     } catch (err) {
-      console.error("Network error:", err);
       setError("Something went wrong. Please try again.");
     }
   };

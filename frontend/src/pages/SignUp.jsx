@@ -7,7 +7,7 @@ import bottomcircle from "../assets/Ellipse 1.png";
 import googleIcon from "../assets/Google Icon.png";
 import arrowBackIcon from "../assets/arrow_back.png";
 
-const API_URL = "http://localhost:5000"; // Replace with your backend URL
+const API_URL = import.meta.env.VITE_API_URL; // Access the base API URL from environment variables
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ const SignUp = () => {
     }
   
     try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
+      const response = await fetch("https://form-bot-6.onrender.com/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
@@ -39,7 +39,6 @@ const SignUp = () => {
       }
   
       const data = await response.json();
-      console.log("Signup successful:", data);
   
       // Store JWT token in localStorage
       localStorage.setItem("token", data.token);
@@ -47,7 +46,6 @@ const SignUp = () => {
       // Optionally, redirect to login
       navigate("/login");
     } catch (err) {
-      console.error(err);
       setError("Something went wrong. Please try again.");
     }
   };

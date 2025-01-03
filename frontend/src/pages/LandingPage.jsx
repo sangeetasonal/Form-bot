@@ -17,7 +17,7 @@ const LandingPage = () => {
           <img src={containerImage} alt="Logo" className="logo-image" />
         </div>
         <div className="nav-buttons">
-        <Link to="/login">
+        <Link to="/signup">
             <button className="sign-in">Sign In</button>
           </Link>
           <button className="create-form">Create a BotForm</button>
